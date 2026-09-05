@@ -1,0 +1,2708 @@
+{
+  "version": "1.0",
+  "totalChunks": 225,
+  "filesProcessed": 19,
+  "chunks": [
+    {
+      "id": "chunk_e11e02b30979",
+      "text": "## Definition\n\nRecursion is when a function calls itself to solve a smaller version of the same problem. It breaks down a problem into simpler subproblems.",
+      "metadata": {
+        "language": "python",
+        "category": "algorithms",
+        "topic": "recursion",
+        "section": "Definition",
+        "difficulty": "intermediate",
+        "source": "algorithms\\recursion.md"
+      }
+    },
+    {
+      "id": "chunk_b3671534f082",
+      "text": "## Base Case\n\nThe condition that stops the recursion (prevents infinite loops):\n\n```python\ndef countdown(n):\n    if n == 0:  # Base case\n        print(\"Blastoff!\")\n        return\n    print(n)\n    countdown(n - 1)  # Recursive call\n```\n\nWithout a base case, the function calls itself forever.",
+      "metadata": {
+        "language": "python",
+        "category": "algorithms",
+        "topic": "recursion",
+        "section": "Base Case",
+        "difficulty": "intermediate",
+        "source": "algorithms\\recursion.md"
+      }
+    },
+    {
+      "id": "chunk_06f69a38a554",
+      "text": "## Recursive Case\n\nThe function calling itself with a smaller/simpler input:\n\n```python\ndef factorial(n):\n    if n == 0:  # Base case\n        return 1\n    else:\n        return n * factorial(n - 1)  # Recursive case\n\nfactorial(5)  # 5 * factorial(4) * factorial(3) * ... * factorial(0)\n```",
+      "metadata": {
+        "language": "python",
+        "category": "algorithms",
+        "topic": "recursion",
+        "section": "Recursive Case",
+        "difficulty": "intermediate",
+        "source": "algorithms\\recursion.md"
+      }
+    },
+    {
+      "id": "chunk_0867dbace631",
+      "text": "## Call Stack\n\nEach function call is pushed onto the stack. With recursion, multiple calls stack up:\n\n```python\nfactorial(3)\n├── 3 * factorial(2)\n│   ├── 2 * factorial(1)\n│   │   ├── 1 * factorial(0)\n│   │   │   └── return 1\n│   │   └── return 1\n│   └── return 2\n└── return 6\n```\n\nWhen a function returns, it's popped off the stack.",
+      "metadata": {
+        "language": "python",
+        "category": "algorithms",
+        "topic": "recursion",
+        "section": "Call Stack",
+        "difficulty": "intermediate",
+        "source": "algorithms\\recursion.md"
+      }
+    },
+    {
+      "id": "chunk_0d0c2d194ba2",
+      "text": "## Simple Examples\n\n**Sum of numbers:**\n```python\ndef sum_numbers(n):\n    if n == 0:\n        return 0\n    return n + sum_numbers(n - 1)\n\nsum_numbers(5)  # 5 + 4 + 3 + 2 + 1 + 0 = 15\n```\n\n**Fibonacci:**\n```python\ndef fibonacci(n):\n    if n <= 1:\n        return n\n    return fibonacci(n - 1) + fibonacci(n - 2)\n\nfibonacci(5)  # 5\n```\n\n**Power function:**\n```python\ndef power(base, exp):\n    if exp == 0:\n        return 1\n    return base * power(base, exp - 1)\n\npower(2, 3)  # 2 * 2 * 2 = 8\n```",
+      "metadata": {
+        "language": "python",
+        "category": "algorithms",
+        "topic": "recursion",
+        "section": "Simple Examples",
+        "difficulty": "intermediate",
+        "source": "algorithms\\recursion.md"
+      }
+    },
+    {
+      "id": "chunk_57bb6e9f3ca7",
+      "text": "## Recursion vs Iteration\n\n**Recursion:**\n```python\ndef factorial_recursive(n):\n    if n == 0:\n        return 1\n    return n * factorial_recursive(n - 1)\n```\n\n**Iteration:**\n```python\ndef factorial_iterative(n):\n    result = 1\n    for i in range(1, n + 1):\n        result *= i\n    return result\n```\n\nBoth are correct. Iteration is often more efficient (no function call overhead).",
+      "metadata": {
+        "language": "python",
+        "category": "algorithms",
+        "topic": "recursion",
+        "section": "Recursion vs Iteration",
+        "difficulty": "intermediate",
+        "source": "algorithms\\recursion.md"
+      }
+    },
+    {
+      "id": "chunk_f37601e12430",
+      "text": "## Common Recursion Mistakes\n\n**Missing base case:**\n```python\n# This never stops!\ndef bad_recursion(n):\n    return n * bad_recursion(n - 1)\n```\n\n**Wrong base case:**\n```python\n# Base case is unreachable\ndef fibonacci(n):\n    if n == -1:  # Will never be true for positive n\n        return 0\n    return fibonacci(n - 1) + fibonacci(n - 2)\n```\n\n**Inefficient recursion:**\n```python\n# Recalculates same values many times\ndef fibonacci(n):\n    if n <= 1:\n        return n\n    return fibonacci(n - 1) + fibonacci(n - 2)  # Slow!\n\n# fibonacci(5) calls fibonacci(3) twice, fibonacci(2) three times, etc.\n```",
+      "metadata": {
+        "language": "python",
+        "category": "algorithms",
+        "topic": "recursion",
+        "section": "Common Recursion Mistakes",
+        "difficulty": "intermediate",
+        "source": "algorithms\\recursion.md"
+      }
+    },
+    {
+      "id": "chunk_48ffb4eb2390",
+      "text": "## Avoiding Infinite Recursion\n\n**Rule 1: Must have a base case**\n```python\ndef count_down(n):\n    if n < 0:  # Base case stops recursion\n        return\n    print(n)\n    count_down(n - 1)\n```\n\n**Rule 2: Must progress toward base case**\n```python\n# Good: getting closer to base case (0)\ndef countdown(n):\n    if n == 0:\n        return\n    countdown(n - 1)\n\n# Bad: not getting closer\ndef bad(n):\n    if n == 0:\n        return\n    bad(n)  # Calls itself with same argument\n```\n\n**Rule 3: Know the recursion depth limit**\n```python\nimport sys\nsys.getrecursionlimit()  # Usually 1000\n\n# Deep recursion causes RecursionError\ndef deep_recursion(n):\n    if n == 0:\n        return 0\n    return deep_recursion(n - 1)\n\ndeep_recursion(2000)  # RecursionError: maximum recursion depth exceeded\n```",
+      "metadata": {
+        "language": "python",
+        "category": "algorithms",
+        "topic": "recursion",
+        "section": "Avoiding Infinite Recursion",
+        "difficulty": "intermediate",
+        "source": "algorithms\\recursion.md"
+      }
+    },
+    {
+      "id": "chunk_206860f61212",
+      "text": "## Important Notes\n\n- Recursion is useful for problems with natural recursive structure (trees, divide-and-conquer)\n- Each recursive call uses memory (call stack)\n- Iteration is often more efficient than recursion\n- Memoization can optimize recursive functions",
+      "metadata": {
+        "language": "python",
+        "category": "algorithms",
+        "topic": "recursion",
+        "section": "Important Notes",
+        "difficulty": "intermediate",
+        "source": "algorithms\\recursion.md"
+      }
+    },
+    {
+      "id": "chunk_1c3da3a49e69",
+      "text": "## Related Concepts\n\n- Stack and recursion depth\n- Tail recursion (optimization technique)\n- Memoization (caching results)\n- Divide-and-conquer algorithms (merge sort, quicksort)\n- Tree traversal (naturally recursive)",
+      "metadata": {
+        "language": "python",
+        "category": "algorithms",
+        "topic": "recursion",
+        "section": "Related Concepts",
+        "difficulty": "intermediate",
+        "source": "algorithms\\recursion.md"
+      }
+    },
+    {
+      "id": "chunk_c31c11a26345",
+      "text": "## Definition\n\nSearching is finding an element in a collection. Different algorithms have different performance characteristics based on data size and sorting.",
+      "metadata": {
+        "language": "python",
+        "category": "algorithms",
+        "topic": "searching",
+        "section": "Definition",
+        "difficulty": "intermediate",
+        "source": "algorithms\\searching.md"
+      }
+    },
+    {
+      "id": "chunk_8a956897e3ef",
+      "text": "## Linear Search\n\nChecks each element one by one until found:\n\n```python\ndef linear_search(lst, target):\n    for i in range(len(lst)):\n        if lst[i] == target:\n            return i\n    return -1\n\nresult = linear_search([3, 1, 4, 1, 5], 4)  # Returns 2\n```\n\n**When to use**: Works on unsorted data, small datasets.",
+      "metadata": {
+        "language": "python",
+        "category": "algorithms",
+        "topic": "searching",
+        "section": "Linear Search",
+        "difficulty": "intermediate",
+        "source": "algorithms\\searching.md"
+      }
+    },
+    {
+      "id": "chunk_e606c61b6a5a",
+      "text": "## Binary Search\n\nDivides the search space in half each time. Requires sorted data:\n\n```python\ndef binary_search(lst, target):\n    left, right = 0, len(lst) - 1\n\n    while left <= right:\n        mid = (left + right) // 2\n        if lst[mid] == target:\n            return mid\n        elif lst[mid] < target:\n            left = mid + 1\n        else:\n            right = mid - 1\n\n    return -1\n\nresult = binary_search([1, 3, 4, 5, 7], 4)  # Returns 2\n```",
+      "metadata": {
+        "language": "python",
+        "category": "algorithms",
+        "topic": "searching",
+        "section": "Binary Search",
+        "difficulty": "intermediate",
+        "source": "algorithms\\searching.md"
+      }
+    },
+    {
+      "id": "chunk_9989f45d0898",
+      "text": "## Prerequisites for Binary Search\n\n- Data must be **sorted**\n- Works on lists or arrays (random access needed)\n- Does NOT work on linked lists",
+      "metadata": {
+        "language": "python",
+        "category": "algorithms",
+        "topic": "searching",
+        "section": "Prerequisites for Binary Search",
+        "difficulty": "intermediate",
+        "source": "algorithms\\searching.md"
+      }
+    },
+    {
+      "id": "chunk_fb91280941ea",
+      "text": "## Time Complexity\n\n- **Linear Search**: O(n) - proportional to list size\n- **Binary Search**: O(log n) - much faster for large sorted data\n\nExample: Searching 1 million items\n- Linear: up to 1,000,000 comparisons\n- Binary: up to ~20 comparisons",
+      "metadata": {
+        "language": "python",
+        "category": "algorithms",
+        "topic": "searching",
+        "section": "Time Complexity",
+        "difficulty": "intermediate",
+        "source": "algorithms\\searching.md"
+      }
+    },
+    {
+      "id": "chunk_f0324e657b22",
+      "text": "## Space Complexity\n\n- **Linear Search**: O(1) - constant space\n- **Binary Search**: O(1) - constant space (iterative)",
+      "metadata": {
+        "language": "python",
+        "category": "algorithms",
+        "topic": "searching",
+        "section": "Space Complexity",
+        "difficulty": "intermediate",
+        "source": "algorithms\\searching.md"
+      }
+    },
+    {
+      "id": "chunk_ddfe5c4aa5ef",
+      "text": "## Iterative Approach (Binary Search)\n\nUsing a loop (shown above):\n\n```python\ndef binary_search(lst, target):\n    left, right = 0, len(lst) - 1\n    while left <= right:\n        mid = (left + right) // 2\n        if lst[mid] == target:\n            return mid\n        elif lst[mid] < target:\n            left = mid + 1\n        else:\n            right = mid - 1\n    return -1\n```",
+      "metadata": {
+        "language": "python",
+        "category": "algorithms",
+        "topic": "searching",
+        "section": "Iterative Approach (Binary Search)",
+        "difficulty": "intermediate",
+        "source": "algorithms\\searching.md"
+      }
+    },
+    {
+      "id": "chunk_cbdba97f55f6",
+      "text": "## Recursive Approach (Binary Search)\n\nUsing function recursion:\n\n```python\ndef binary_search_recursive(lst, target, left=0, right=None):\n    if right is None:\n        right = len(lst) - 1\n\n    if left > right:\n        return -1\n\n    mid = (left + right) // 2\n    if lst[mid] == target:\n        return mid\n    elif lst[mid] < target:\n        return binary_search_recursive(lst, target, mid + 1, right)\n    else:\n        return binary_search_recursive(lst, target, left, mid - 1)\n```",
+      "metadata": {
+        "language": "python",
+        "category": "algorithms",
+        "topic": "searching",
+        "section": "Recursive Approach (Binary Search)",
+        "difficulty": "intermediate",
+        "source": "algorithms\\searching.md"
+      }
+    },
+    {
+      "id": "chunk_b4b9139ce00a",
+      "text": "## Comparison: Linear vs Binary\n\n| Aspect | Linear | Binary |\n|--------|--------|--------|\n| Sorted data needed | No | Yes |\n| Best case | 1 comparison | 1 comparison |\n| Average case | n/2 comparisons | log n comparisons |\n| Worst case | n comparisons | log n comparisons |\n| Implementation | Simple | Slightly complex |",
+      "metadata": {
+        "language": "python",
+        "category": "algorithms",
+        "topic": "searching",
+        "section": "Comparison: Linear vs Binary",
+        "difficulty": "intermediate",
+        "source": "algorithms\\searching.md"
+      }
+    },
+    {
+      "id": "chunk_61b0a89bed46",
+      "text": "## Common Mistakes\n\n- Using binary search on unsorted data\n- Off-by-one errors in mid calculation: use `(left + right) // 2`\n- Wrong boundary conditions in loop/recursion",
+      "metadata": {
+        "language": "python",
+        "category": "algorithms",
+        "topic": "searching",
+        "section": "Common Mistakes",
+        "difficulty": "intermediate",
+        "source": "algorithms\\searching.md"
+      }
+    },
+    {
+      "id": "chunk_33ea6aee1761",
+      "text": "## Important Notes\n\n- Binary search is much faster for large sorted datasets\n- Linear search is simpler and works on unsorted data\n- Python's `list.index()` uses linear search\n- Sorting data is expensive; choose search method based on your use case",
+      "metadata": {
+        "language": "python",
+        "category": "algorithms",
+        "topic": "searching",
+        "section": "Important Notes",
+        "difficulty": "intermediate",
+        "source": "algorithms\\searching.md"
+      }
+    },
+    {
+      "id": "chunk_ff1563f1d5bb",
+      "text": "## Related Concepts\n\n- Sorting algorithms\n- Hash tables (O(1) average search)\n- Search in 2D arrays\n- Search optimization techniques",
+      "metadata": {
+        "language": "python",
+        "category": "algorithms",
+        "topic": "searching",
+        "section": "Related Concepts",
+        "difficulty": "intermediate",
+        "source": "algorithms\\searching.md"
+      }
+    },
+    {
+      "id": "chunk_83a461360fff",
+      "text": "## Definition\n\nSorting is arranging elements in a specific order (ascending or descending). Different algorithms have different performance characteristics.",
+      "metadata": {
+        "language": "python",
+        "category": "algorithms",
+        "topic": "sorting",
+        "section": "Definition",
+        "difficulty": "intermediate",
+        "source": "algorithms\\sorting.md"
+      }
+    },
+    {
+      "id": "chunk_965c3bab7691",
+      "text": "## What Sorting Means\n\nArranging elements in ascending order (smallest to largest):\n\n```python\nunsorted = [3, 1, 4, 1, 5, 9, 2]\nsorted_list = [1, 1, 2, 3, 4, 5, 9]\n```",
+      "metadata": {
+        "language": "python",
+        "category": "algorithms",
+        "topic": "sorting",
+        "section": "What Sorting Means",
+        "difficulty": "intermediate",
+        "source": "algorithms\\sorting.md"
+      }
+    },
+    {
+      "id": "chunk_7f1b822d899c",
+      "text": "## Python sorted()\n\nBuilt-in function that returns a new sorted list:\n\n```python\nnumbers = [3, 1, 4, 1, 5]\nsorted_numbers = sorted(numbers)  # [1, 1, 3, 4, 5]\n\ndescending = sorted(numbers, reverse=True)  # [5, 4, 3, 1, 1]\n\n# Sort by custom key\nwords = [\"cat\", \"apple\", \"bee\"]\nsorted_words = sorted(words, key=len)  # ['cat', 'bee', 'apple'] (by length)\n```",
+      "metadata": {
+        "language": "python",
+        "category": "algorithms",
+        "topic": "sorting",
+        "section": "Python sorted()",
+        "difficulty": "intermediate",
+        "source": "algorithms\\sorting.md"
+      }
+    },
+    {
+      "id": "chunk_2493f141378f",
+      "text": "## list.sort()\n\nMethod that sorts a list in place (modifies the original):\n\n```python\nnumbers = [3, 1, 4, 1, 5]\nnumbers.sort()  # [1, 1, 3, 4, 5]\nprint(numbers)  # Mutated\n\nnumbers.sort(reverse=True)  # [5, 4, 3, 1, 1]\nnumbers.sort(key=str)  # Sort as strings\n```",
+      "metadata": {
+        "language": "python",
+        "category": "algorithms",
+        "topic": "sorting",
+        "section": "list.sort()",
+        "difficulty": "intermediate",
+        "source": "algorithms\\sorting.md"
+      }
+    },
+    {
+      "id": "chunk_7cff01774a6c",
+      "text": "## Bubble Sort Concept\n\nRepeatedly compares adjacent elements and swaps if out of order:\n\n```python\ndef bubble_sort(lst):\n    n = len(lst)\n    for i in range(n):\n        for j in range(0, n - i - 1):\n            if lst[j] > lst[j + 1]:\n                lst[j], lst[j + 1] = lst[j + 1], lst[j]\n    return lst\n```\n\n**How it works:**\n- Compare pairs of adjacent elements\n- Swap if the first is greater\n- Repeat until sorted\n\n**Performance**: O(n²) - slow for large data",
+      "metadata": {
+        "language": "python",
+        "category": "algorithms",
+        "topic": "sorting",
+        "section": "Bubble Sort Concept",
+        "difficulty": "intermediate",
+        "source": "algorithms\\sorting.md"
+      }
+    },
+    {
+      "id": "chunk_16da45bb22a9",
+      "text": "## Selection Sort Concept\n\nFinds the minimum element and places it at the beginning:\n\n```python\ndef selection_sort(lst):\n    n = len(lst)\n    for i in range(n):\n        min_idx = i\n        for j in range(i + 1, n):\n            if lst[j] < lst[min_idx]:\n                min_idx = j\n        lst[i], lst[min_idx] = lst[min_idx], lst[i]\n    return lst\n```\n\n**How it works:**\n- Find the smallest element\n- Swap with the first unsorted element\n- Repeat for the rest\n\n**Performance**: O(n²)",
+      "metadata": {
+        "language": "python",
+        "category": "algorithms",
+        "topic": "sorting",
+        "section": "Selection Sort Concept",
+        "difficulty": "intermediate",
+        "source": "algorithms\\sorting.md"
+      }
+    },
+    {
+      "id": "chunk_3653b7596d44",
+      "text": "## Insertion Sort Concept\n\nBuilds sorted list one item at a time by inserting elements:\n\n```python\ndef insertion_sort(lst):\n    for i in range(1, len(lst)):\n        key = lst[i]\n        j = i - 1\n        while j >= 0 and lst[j] > key:\n            lst[j + 1] = lst[j]\n            j -= 1\n        lst[j + 1] = key\n    return lst\n```\n\n**How it works:**\n- Assume first element is sorted\n- For each new element, find its position in the sorted part\n- Insert it there\n\n**Performance**: O(n²) average, but fast for small or nearly sorted data",
+      "metadata": {
+        "language": "python",
+        "category": "algorithms",
+        "topic": "sorting",
+        "section": "Insertion Sort Concept",
+        "difficulty": "intermediate",
+        "source": "algorithms\\sorting.md"
+      }
+    },
+    {
+      "id": "chunk_06ed8c0f0b39",
+      "text": "## Merge Sort Concept\n\nDivides the list in half, sorts each half, then merges:\n\n```python\ndef merge_sort(lst):\n    if len(lst) <= 1:\n        return lst\n\n    mid = len(lst) // 2\n    left = merge_sort(lst[:mid])\n    right = merge_sort(lst[mid:])\n\n    return merge(left, right)\n\ndef merge(left, right):\n    result = []\n    i = j = 0\n    while i < len(left) and j < len(right):\n        if left[i] <= right[j]:\n            result.append(left[i])\n            i += 1\n        else:\n            result.append(right[j])\n            j += 1\n    result.extend(left[i:])\n    result.extend(right[j:])\n    return result\n```\n\n**Performance**: O(n log n) - much faster than bubble/selection/insertion",
+      "metadata": {
+        "language": "python",
+        "category": "algorithms",
+        "topic": "sorting",
+        "section": "Merge Sort Concept",
+        "difficulty": "intermediate",
+        "source": "algorithms\\sorting.md"
+      }
+    },
+    {
+      "id": "chunk_ba7831e51340",
+      "text": "## Quicksort Concept\n\nPicks a pivot element and partitions list around it:\n\n```python\ndef quicksort(lst):\n    if len(lst) <= 1:\n        return lst\n\n    pivot = lst[len(lst) // 2]\n    left = [x for x in lst if x < pivot]\n    middle = [x for x in lst if x == pivot]\n    right = [x for x in lst if x > pivot]\n\n    return quicksort(left) + middle + quicksort(right)\n```\n\n**Performance**: O(n log n) average, O(n²) worst case",
+      "metadata": {
+        "language": "python",
+        "category": "algorithms",
+        "topic": "sorting",
+        "section": "Quicksort Concept",
+        "difficulty": "intermediate",
+        "source": "algorithms\\sorting.md"
+      }
+    },
+    {
+      "id": "chunk_9d105ad99f1c",
+      "text": "## Basic Time-Complexity Comparison\n\n| Algorithm | Best | Average | Worst | Space |\n|-----------|------|---------|-------|-------|\n| Bubble Sort | O(n) | O(n²) | O(n²) | O(1) |\n| Selection Sort | O(n²) | O(n²) | O(n²) | O(1) |\n| Insertion Sort | O(n) | O(n²) | O(n²) | O(1) |\n| Merge Sort | O(n log n) | O(n log n) | O(n log n) | O(n) |\n| Quicksort | O(n log n) | O(n log n) | O(n²) | O(log n) |",
+      "metadata": {
+        "language": "python",
+        "category": "algorithms",
+        "topic": "sorting",
+        "section": "Basic Time-Complexity Comparison",
+        "difficulty": "intermediate",
+        "source": "algorithms\\sorting.md"
+      }
+    },
+    {
+      "id": "chunk_e4a23a193772",
+      "text": "## Common Mistakes\n\n- Using bubble sort for large datasets (very slow)\n- Assuming quicksort is always O(n log n) (can degrade to O(n²))\n- Not considering space complexity (merge sort uses extra space)",
+      "metadata": {
+        "language": "python",
+        "category": "algorithms",
+        "topic": "sorting",
+        "section": "Common Mistakes",
+        "difficulty": "intermediate",
+        "source": "algorithms\\sorting.md"
+      }
+    },
+    {
+      "id": "chunk_f800ac022fb1",
+      "text": "## Important Notes\n\n- Use Python's built-in `sorted()` or `list.sort()` for production code\n- They use Timsort (hybrid of merge and insertion sort), O(n log n)\n- Understand sorting concepts for interviews and learning\n- For small data (< 50 items), simple algorithms work fine",
+      "metadata": {
+        "language": "python",
+        "category": "algorithms",
+        "topic": "sorting",
+        "section": "Important Notes",
+        "difficulty": "intermediate",
+        "source": "algorithms\\sorting.md"
+      }
+    },
+    {
+      "id": "chunk_72be5be4a1bf",
+      "text": "## Related Concepts\n\n- Searching (often done on sorted data)\n- Time and space complexity\n- Stability (preserving order of equal elements)\n- Comparison-based vs counting sort",
+      "metadata": {
+        "language": "python",
+        "category": "algorithms",
+        "topic": "sorting",
+        "section": "Related Concepts",
+        "difficulty": "intermediate",
+        "source": "algorithms\\sorting.md"
+      }
+    },
+    {
+      "id": "chunk_85b7c7c7d0f2",
+      "text": "## Definition\n\nA dictionary is a mutable, unordered collection of key-value pairs. Created using curly braces `{}` with `key: value` pairs. Keys must be unique and immutable.",
+      "metadata": {
+        "language": "python",
+        "category": "data-structures",
+        "topic": "dictionaries",
+        "section": "Definition",
+        "difficulty": "beginner",
+        "source": "data-structures\\dictionaries.md"
+      }
+    },
+    {
+      "id": "chunk_0a06fb20a2a4",
+      "text": "## Key-Value Pairs\n\nDictionaries map keys to values:\n\n```python\nperson = {\"name\": \"Alice\", \"age\": 30, \"city\": \"NYC\"}\n```",
+      "metadata": {
+        "language": "python",
+        "category": "data-structures",
+        "topic": "dictionaries",
+        "section": "Key-Value Pairs",
+        "difficulty": "beginner",
+        "source": "data-structures\\dictionaries.md"
+      }
+    },
+    {
+      "id": "chunk_f16d78384235",
+      "text": "## Creating Dictionaries\n\n```python\nempty_dict = {}\nperson = {\"name\": \"Bob\", \"age\": 25}\nfrom_constructor = dict(name=\"Charlie\", age=35)\nfrom_list = dict([(\"x\", 1), (\"y\", 2)])\n```",
+      "metadata": {
+        "language": "python",
+        "category": "data-structures",
+        "topic": "dictionaries",
+        "section": "Creating Dictionaries",
+        "difficulty": "beginner",
+        "source": "data-structures\\dictionaries.md"
+      }
+    },
+    {
+      "id": "chunk_6aec54a7c93a",
+      "text": "## Accessing Values\n\nUse the key in square brackets or `get()`:\n\n```python\nperson = {\"name\": \"Alice\", \"age\": 30}\nperson[\"name\"]  # \"Alice\"\nperson[\"age\"]  # 30\n```",
+      "metadata": {
+        "language": "python",
+        "category": "data-structures",
+        "topic": "dictionaries",
+        "section": "Accessing Values",
+        "difficulty": "beginner",
+        "source": "data-structures\\dictionaries.md"
+      }
+    },
+    {
+      "id": "chunk_dc951625bff4",
+      "text": "## get()\n\nAccess a value with a default if key doesn't exist:\n\n```python\nperson = {\"name\": \"Alice\", \"age\": 30}\nperson.get(\"name\")  # \"Alice\"\nperson.get(\"city\")  # None\nperson.get(\"city\", \"Unknown\")  # \"Unknown\"\n```\n\nAccessing with brackets raises KeyError if key doesn't exist.",
+      "metadata": {
+        "language": "python",
+        "category": "data-structures",
+        "topic": "dictionaries",
+        "section": "get()",
+        "difficulty": "beginner",
+        "source": "data-structures\\dictionaries.md"
+      }
+    },
+    {
+      "id": "chunk_02c6b6561e68",
+      "text": "## Adding/Updating Values\n\n```python\nperson = {\"name\": \"Alice\"}\nperson[\"age\"] = 30  # Add new key-value\nperson[\"name\"] = \"Alicia\"  # Update existing\n```",
+      "metadata": {
+        "language": "python",
+        "category": "data-structures",
+        "topic": "dictionaries",
+        "section": "Adding/Updating Values",
+        "difficulty": "beginner",
+        "source": "data-structures\\dictionaries.md"
+      }
+    },
+    {
+      "id": "chunk_d5aa9aef906c",
+      "text": "## Deleting Values\n\n```python\nperson = {\"name\": \"Alice\", \"age\": 30, \"city\": \"NYC\"}\ndel person[\"city\"]  # Delete key\nperson.pop(\"age\")  # Remove and return value\nperson.clear()  # Remove all items\n```",
+      "metadata": {
+        "language": "python",
+        "category": "data-structures",
+        "topic": "dictionaries",
+        "section": "Deleting Values",
+        "difficulty": "beginner",
+        "source": "data-structures\\dictionaries.md"
+      }
+    },
+    {
+      "id": "chunk_8f831652ca5e",
+      "text": "## keys()\n\nGet all keys:\n\n```python\nperson = {\"name\": \"Alice\", \"age\": 30}\nperson.keys()  # dict_keys(['name', 'age'])\n\nfor key in person.keys():\n    print(key)\n```",
+      "metadata": {
+        "language": "python",
+        "category": "data-structures",
+        "topic": "dictionaries",
+        "section": "keys()",
+        "difficulty": "beginner",
+        "source": "data-structures\\dictionaries.md"
+      }
+    },
+    {
+      "id": "chunk_7055fc3fd4ca",
+      "text": "## values()\n\nGet all values:\n\n```python\nperson = {\"name\": \"Alice\", \"age\": 30}\nperson.values()  # dict_values(['Alice', 30])\n\nfor value in person.values():\n    print(value)\n```",
+      "metadata": {
+        "language": "python",
+        "category": "data-structures",
+        "topic": "dictionaries",
+        "section": "values()",
+        "difficulty": "beginner",
+        "source": "data-structures\\dictionaries.md"
+      }
+    },
+    {
+      "id": "chunk_6dc4350851f0",
+      "text": "## items()\n\nGet all key-value pairs:\n\n```python\nperson = {\"name\": \"Alice\", \"age\": 30}\nperson.items()  # dict_items([('name', 'Alice'), ('age', 30)])\n\nfor key, value in person.items():\n    print(f\"{key}: {value}\")\n```",
+      "metadata": {
+        "language": "python",
+        "category": "data-structures",
+        "topic": "dictionaries",
+        "section": "items()",
+        "difficulty": "beginner",
+        "source": "data-structures\\dictionaries.md"
+      }
+    },
+    {
+      "id": "chunk_9135d1b4941e",
+      "text": "## Dictionary Comprehensions\n\nCreate a new dictionary from an existing one concisely:\n\n```python\nsquares = {x: x**2 for x in range(5)}\n# {0: 0, 1: 1, 2: 4, 3: 9, 4: 16}\n\neven_squares = {x: x**2 for x in range(10) if x % 2 == 0}\n# {0: 0, 2: 4, 4: 16, 6: 36, 8: 64}\n```",
+      "metadata": {
+        "language": "python",
+        "category": "data-structures",
+        "topic": "dictionaries",
+        "section": "Dictionary Comprehensions",
+        "difficulty": "beginner",
+        "source": "data-structures\\dictionaries.md"
+      }
+    },
+    {
+      "id": "chunk_77d2f2e135cd",
+      "text": "## Nested Dictionaries\n\nDictionaries containing other dictionaries:\n\n```python\npeople = {\n    \"person1\": {\"name\": \"Alice\", \"age\": 30},\n    \"person2\": {\"name\": \"Bob\", \"age\": 25}\n}\n\npeople[\"person1\"][\"name\"]  # \"Alice\"\n```",
+      "metadata": {
+        "language": "python",
+        "category": "data-structures",
+        "topic": "dictionaries",
+        "section": "Nested Dictionaries",
+        "difficulty": "beginner",
+        "source": "data-structures\\dictionaries.md"
+      }
+    },
+    {
+      "id": "chunk_379cee5f21ac",
+      "text": "## Common Mistakes\n\n- Using a mutable object as a key: `{[1, 2]: \"value\"}` → TypeError\n- Accessing a key that doesn't exist with brackets: `d[\"missing\"]` → KeyError\n- Assuming dictionaries are ordered (they maintain insertion order in Python 3.7+)\n- Confusing `keys()` return type (it's a dict_keys object, not a list)",
+      "metadata": {
+        "language": "python",
+        "category": "data-structures",
+        "topic": "dictionaries",
+        "section": "Common Mistakes",
+        "difficulty": "beginner",
+        "source": "data-structures\\dictionaries.md"
+      }
+    },
+    {
+      "id": "chunk_ed6f281139ad",
+      "text": "## Important Notes\n\n- Keys must be immutable (strings, numbers, tuples are OK; lists and dicts are not)\n- Dictionary order is guaranteed in Python 3.7+\n- Use `get()` instead of `[]` to avoid KeyError\n- Check membership with `key in dict`, not `value in dict`",
+      "metadata": {
+        "language": "python",
+        "category": "data-structures",
+        "topic": "dictionaries",
+        "section": "Important Notes",
+        "difficulty": "beginner",
+        "source": "data-structures\\dictionaries.md"
+      }
+    },
+    {
+      "id": "chunk_8a260bd4fb46",
+      "text": "## Related Concepts\n\n- Lists and tuples (other collections)\n- Membership testing: `\"name\" in person`\n- Default dict from collections module\n- JSON (JavaScript Object Notation) is similar to Python dicts",
+      "metadata": {
+        "language": "python",
+        "category": "data-structures",
+        "topic": "dictionaries",
+        "section": "Related Concepts",
+        "difficulty": "beginner",
+        "source": "data-structures\\dictionaries.md"
+      }
+    },
+    {
+      "id": "chunk_4913cc6c76b4",
+      "text": "## Definition\n\nA list is a mutable, ordered collection of items. Lists can contain different data types and are created using square brackets `[]`.",
+      "metadata": {
+        "language": "python",
+        "category": "data-structures",
+        "topic": "lists",
+        "section": "Definition",
+        "difficulty": "beginner",
+        "source": "data-structures\\lists.md"
+      }
+    },
+    {
+      "id": "chunk_a26dc978b5a1",
+      "text": "## Creating Lists\n\n```python\nempty_list = []\nnumbers = [1, 2, 3, 4, 5]\nmixed = [1, \"hello\", 3.14, True]\nnested = [1, [2, 3], [4, 5]]\n```",
+      "metadata": {
+        "language": "python",
+        "category": "data-structures",
+        "topic": "lists",
+        "section": "Creating Lists",
+        "difficulty": "beginner",
+        "source": "data-structures\\lists.md"
+      }
+    },
+    {
+      "id": "chunk_0ee9623ea5ff",
+      "text": "## Indexing\n\nAccess items by position (0-based):\n\n```python\nfruits = [\"apple\", \"banana\", \"cherry\"]\nfruits[0]  # \"apple\"\nfruits[1]  # \"banana\"\nfruits[-1]  # \"cherry\" (last item)\nfruits[-2]  # \"banana\" (second-to-last)\n```",
+      "metadata": {
+        "language": "python",
+        "category": "data-structures",
+        "topic": "lists",
+        "section": "Indexing",
+        "difficulty": "beginner",
+        "source": "data-structures\\lists.md"
+      }
+    },
+    {
+      "id": "chunk_1d7904a6e408",
+      "text": "## Slicing\n\nExtract a range of items:\n\n```python\nnumbers = [0, 1, 2, 3, 4, 5]\nnumbers[1:4]  # [1, 2, 3] (start inclusive, stop exclusive)\nnumbers[:3]  # [0, 1, 2] (from beginning)\nnumbers[2:]  # [2, 3, 4, 5] (to end)\nnumbers[::2]  # [0, 2, 4] (every 2nd item)\n```",
+      "metadata": {
+        "language": "python",
+        "category": "data-structures",
+        "topic": "lists",
+        "section": "Slicing",
+        "difficulty": "beginner",
+        "source": "data-structures\\lists.md"
+      }
+    },
+    {
+      "id": "chunk_26538e1a5350",
+      "text": "## Modifying Lists\n\n**Change a single item:**\n```python\nlst = [1, 2, 3]\nlst[1] = 20  # [1, 20, 3]\n```\n\n**Change multiple items:**\n```python\nlst = [1, 2, 3, 4, 5]\nlst[1:3] = [20, 30]  # [1, 20, 30, 4, 5]\n```",
+      "metadata": {
+        "language": "python",
+        "category": "data-structures",
+        "topic": "lists",
+        "section": "Modifying Lists",
+        "difficulty": "beginner",
+        "source": "data-structures\\lists.md"
+      }
+    },
+    {
+      "id": "chunk_fc1a20e26583",
+      "text": "## append()\n\nAdd an item to the end:\n\n```python\nlst = [1, 2, 3]\nlst.append(4)  # [1, 2, 3, 4]\n```",
+      "metadata": {
+        "language": "python",
+        "category": "data-structures",
+        "topic": "lists",
+        "section": "append()",
+        "difficulty": "beginner",
+        "source": "data-structures\\lists.md"
+      }
+    },
+    {
+      "id": "chunk_051eb16bd4f5",
+      "text": "## extend()\n\nAdd multiple items:\n\n```python\nlst = [1, 2, 3]\nlst.extend([4, 5])  # [1, 2, 3, 4, 5]\n```",
+      "metadata": {
+        "language": "python",
+        "category": "data-structures",
+        "topic": "lists",
+        "section": "extend()",
+        "difficulty": "beginner",
+        "source": "data-structures\\lists.md"
+      }
+    },
+    {
+      "id": "chunk_b568bfb263ec",
+      "text": "## insert()\n\nInsert at a specific position:\n\n```python\nlst = [1, 2, 4, 5]\nlst.insert(2, 3)  # [1, 2, 3, 4, 5]\n```",
+      "metadata": {
+        "language": "python",
+        "category": "data-structures",
+        "topic": "lists",
+        "section": "insert()",
+        "difficulty": "beginner",
+        "source": "data-structures\\lists.md"
+      }
+    },
+    {
+      "id": "chunk_498bda1b9791",
+      "text": "## remove()\n\nRemove the first occurrence of a value:\n\n```python\nlst = [1, 2, 3, 2, 4]\nlst.remove(2)  # [1, 3, 2, 4] (removes first 2)\n```",
+      "metadata": {
+        "language": "python",
+        "category": "data-structures",
+        "topic": "lists",
+        "section": "remove()",
+        "difficulty": "beginner",
+        "source": "data-structures\\lists.md"
+      }
+    },
+    {
+      "id": "chunk_0e17458d8142",
+      "text": "## pop()\n\nRemove and return an item by index (default: last item):\n\n```python\nlst = [1, 2, 3, 4]\nlst.pop()  # Returns 4, lst is now [1, 2, 3]\nlst.pop(1)  # Returns 2, lst is now [1, 3]\n```",
+      "metadata": {
+        "language": "python",
+        "category": "data-structures",
+        "topic": "lists",
+        "section": "pop()",
+        "difficulty": "beginner",
+        "source": "data-structures\\lists.md"
+      }
+    },
+    {
+      "id": "chunk_3c67842d5336",
+      "text": "## sort()\n\nSort the list in place:\n\n```python\nlst = [3, 1, 4, 1, 5]\nlst.sort()  # [1, 1, 3, 4, 5]\nlst.sort(reverse=True)  # [5, 4, 3, 1, 1]\n```",
+      "metadata": {
+        "language": "python",
+        "category": "data-structures",
+        "topic": "lists",
+        "section": "sort()",
+        "difficulty": "beginner",
+        "source": "data-structures\\lists.md"
+      }
+    },
+    {
+      "id": "chunk_73bac1e004b5",
+      "text": "## reverse()\n\nReverse the list in place:\n\n```python\nlst = [1, 2, 3]\nlst.reverse()  # [3, 2, 1]\n```",
+      "metadata": {
+        "language": "python",
+        "category": "data-structures",
+        "topic": "lists",
+        "section": "reverse()",
+        "difficulty": "beginner",
+        "source": "data-structures\\lists.md"
+      }
+    },
+    {
+      "id": "chunk_3eb4e8b357d4",
+      "text": "## List Comprehensions\n\nCreate a new list from an existing one concisely:\n\n```python\nsquares = [x**2 for x in range(5)]  # [0, 1, 4, 9, 16]\n\nevens = [x for x in range(10) if x % 2 == 0]  # [0, 2, 4, 6, 8]\n```",
+      "metadata": {
+        "language": "python",
+        "category": "data-structures",
+        "topic": "lists",
+        "section": "List Comprehensions",
+        "difficulty": "beginner",
+        "source": "data-structures\\lists.md"
+      }
+    },
+    {
+      "id": "chunk_3f3a83712c9c",
+      "text": "## Common Mistakes\n\n- Indexing out of range: `lst[10]` when list has only 5 items → IndexError\n- Confusing `append()` (adds one item) with `extend()` (adds multiple)\n- Modifying a list while iterating over it\n- `sort()` returns `None`, not a sorted list",
+      "metadata": {
+        "language": "python",
+        "category": "data-structures",
+        "topic": "lists",
+        "section": "Common Mistakes",
+        "difficulty": "beginner",
+        "source": "data-structures\\lists.md"
+      }
+    },
+    {
+      "id": "chunk_12b3be43abfd",
+      "text": "## Important Notes\n\n- Lists are mutable: you can change items\n- Negative indices count from the end\n- `append()` modifies the list; doesn't return a new list\n- Use slicing to copy a list: `new_list = lst[:]`",
+      "metadata": {
+        "language": "python",
+        "category": "data-structures",
+        "topic": "lists",
+        "section": "Important Notes",
+        "difficulty": "beginner",
+        "source": "data-structures\\lists.md"
+      }
+    },
+    {
+      "id": "chunk_5d2e251d4a12",
+      "text": "## Related Concepts\n\n- Tuples (immutable alternative)\n- List methods: `count()`, `index()`, `clear()`\n- Sorting with `sorted()` function\n- List comprehensions for filtering and transforming",
+      "metadata": {
+        "language": "python",
+        "category": "data-structures",
+        "topic": "lists",
+        "section": "Related Concepts",
+        "difficulty": "beginner",
+        "source": "data-structures\\lists.md"
+      }
+    },
+    {
+      "id": "chunk_ea35825b48ee",
+      "text": "## Definition\n\nA set is an unordered, mutable collection of unique items. Sets cannot contain duplicate values and are created using curly braces `{}`.",
+      "metadata": {
+        "language": "python",
+        "category": "data-structures",
+        "topic": "sets",
+        "section": "Definition",
+        "difficulty": "beginner",
+        "source": "data-structures\\sets.md"
+      }
+    },
+    {
+      "id": "chunk_7381b16426ba",
+      "text": "## Set Creation\n\n```python\nempty_set = set()  # Use set(), not {}, which creates an empty dict\nnumbers = {1, 2, 3, 4, 5}\nmixed = {1, \"hello\", 3.14}\nfrom_list = set([1, 2, 2, 3])  # {1, 2, 3} duplicates removed\n```",
+      "metadata": {
+        "language": "python",
+        "category": "data-structures",
+        "topic": "sets",
+        "section": "Set Creation",
+        "difficulty": "beginner",
+        "source": "data-structures\\sets.md"
+      }
+    },
+    {
+      "id": "chunk_2e2949081224",
+      "text": "## Uniqueness\n\nSets automatically remove duplicates:\n\n```python\ns = {1, 2, 2, 3, 3, 3}\nprint(s)  # {1, 2, 3}\n```",
+      "metadata": {
+        "language": "python",
+        "category": "data-structures",
+        "topic": "sets",
+        "section": "Uniqueness",
+        "difficulty": "beginner",
+        "source": "data-structures\\sets.md"
+      }
+    },
+    {
+      "id": "chunk_bb50c4929068",
+      "text": "## add()\n\nAdd a single item:\n\n```python\ns = {1, 2, 3}\ns.add(4)  # {1, 2, 3, 4}\ns.add(2)  # Still {1, 2, 3, 4} (no duplicate)\n```",
+      "metadata": {
+        "language": "python",
+        "category": "data-structures",
+        "topic": "sets",
+        "section": "add()",
+        "difficulty": "beginner",
+        "source": "data-structures\\sets.md"
+      }
+    },
+    {
+      "id": "chunk_a608fe25c021",
+      "text": "## remove()\n\nRemove an item (raises error if not found):\n\n```python\ns = {1, 2, 3}\ns.remove(2)  # {1, 3}\ns.remove(5)  # KeyError\n```",
+      "metadata": {
+        "language": "python",
+        "category": "data-structures",
+        "topic": "sets",
+        "section": "remove()",
+        "difficulty": "beginner",
+        "source": "data-structures\\sets.md"
+      }
+    },
+    {
+      "id": "chunk_4fbd019c6466",
+      "text": "## discard()\n\nRemove an item (no error if not found):\n\n```python\ns = {1, 2, 3}\ns.discard(2)  # {1, 3}\ns.discard(5)  # {1, 3} (no error)\n```",
+      "metadata": {
+        "language": "python",
+        "category": "data-structures",
+        "topic": "sets",
+        "section": "discard()",
+        "difficulty": "beginner",
+        "source": "data-structures\\sets.md"
+      }
+    },
+    {
+      "id": "chunk_04501f933ce2",
+      "text": "## Set Operations\n\n**Union** (all items from both sets):\n```python\na = {1, 2, 3}\nb = {3, 4, 5}\na.union(b)  # {1, 2, 3, 4, 5}\na | b  # Same as union\n```\n\n**Intersection** (items in both sets):\n```python\na = {1, 2, 3}\nb = {3, 4, 5}\na.intersection(b)  # {3}\na & b  # Same as intersection\n```\n\n**Difference** (items in first set but not second):\n```python\na = {1, 2, 3}\nb = {3, 4, 5}\na.difference(b)  # {1, 2}\na - b  # Same as difference\n```\n\n**Symmetric Difference** (items in either set but not both):\n```python\na = {1, 2, 3}\nb = {3, 4, 5}\na.symmetric_difference(b)  # {1, 2, 4, 5}\na ^ b  # Same as symmetric difference\n```",
+      "metadata": {
+        "language": "python",
+        "category": "data-structures",
+        "topic": "sets",
+        "section": "Set Operations",
+        "difficulty": "beginner",
+        "source": "data-structures\\sets.md"
+      }
+    },
+    {
+      "id": "chunk_d0c941fa1ad1",
+      "text": "## Membership Testing\n\nCheck if an item is in the set:\n\n```python\ns = {1, 2, 3}\n2 in s  # True\n4 in s  # False\n4 not in s  # True\n```",
+      "metadata": {
+        "language": "python",
+        "category": "data-structures",
+        "topic": "sets",
+        "section": "Membership Testing",
+        "difficulty": "beginner",
+        "source": "data-structures\\sets.md"
+      }
+    },
+    {
+      "id": "chunk_65734c71c504",
+      "text": "## Common Mistakes\n\n- Using `{}` for an empty set creates an empty dict, not a set\n- Trying to add a list to a set: `s.add([1, 2])` → TypeError (lists are unhashable)\n- Accessing items by index: sets are unordered\n- Assuming `add()` returns the modified set (it returns None)",
+      "metadata": {
+        "language": "python",
+        "category": "data-structures",
+        "topic": "sets",
+        "section": "Common Mistakes",
+        "difficulty": "beginner",
+        "source": "data-structures\\sets.md"
+      }
+    },
+    {
+      "id": "chunk_703ae2ae7422",
+      "text": "## Important Notes\n\n- Sets are unordered; iteration order is not guaranteed\n- Sets cannot contain mutable objects (lists, dicts, sets)\n- Use sets for membership testing (faster than lists for large data)\n- Tuples can be in sets (they're hashable)",
+      "metadata": {
+        "language": "python",
+        "category": "data-structures",
+        "topic": "sets",
+        "section": "Important Notes",
+        "difficulty": "beginner",
+        "source": "data-structures\\sets.md"
+      }
+    },
+    {
+      "id": "chunk_17d063302f66",
+      "text": "## Related Concepts\n\n- List operations (similar but different behavior)\n- Frozenset (immutable set)\n- Set comprehensions: `{x**2 for x in range(5)}`\n- Set methods: `pop()`, `clear()`, `copy()`",
+      "metadata": {
+        "language": "python",
+        "category": "data-structures",
+        "topic": "sets",
+        "section": "Related Concepts",
+        "difficulty": "beginner",
+        "source": "data-structures\\sets.md"
+      }
+    },
+    {
+      "id": "chunk_4f44e474c1e8",
+      "text": "## Definition\n\nA tuple is an immutable, ordered collection of items. Created with parentheses `()` or just commas. Once created, tuples cannot be modified.",
+      "metadata": {
+        "language": "python",
+        "category": "data-structures",
+        "topic": "tuples",
+        "section": "Definition",
+        "difficulty": "beginner",
+        "source": "data-structures\\tuples.md"
+      }
+    },
+    {
+      "id": "chunk_b2b548ad6632",
+      "text": "## Tuple Creation\n\n```python\nempty_tuple = ()\nsingle_item = (42,)  # Comma is required for single item\nnumbers = (1, 2, 3, 4)\nmixed = (1, \"hello\", 3.14, True)\nwithout_parens = 1, 2, 3  # Also valid\n```",
+      "metadata": {
+        "language": "python",
+        "category": "data-structures",
+        "topic": "tuples",
+        "section": "Tuple Creation",
+        "difficulty": "beginner",
+        "source": "data-structures\\tuples.md"
+      }
+    },
+    {
+      "id": "chunk_030e70cb18ea",
+      "text": "## Indexing\n\nAccess items by position (0-based):\n\n```python\ncoords = (10, 20, 30)\ncoords[0]  # 10\ncoords[-1]  # 30\ncoords[1]  # 20\n```",
+      "metadata": {
+        "language": "python",
+        "category": "data-structures",
+        "topic": "tuples",
+        "section": "Indexing",
+        "difficulty": "beginner",
+        "source": "data-structures\\tuples.md"
+      }
+    },
+    {
+      "id": "chunk_0a443d574785",
+      "text": "## Slicing\n\nExtract a range of items:\n\n```python\nt = (0, 1, 2, 3, 4, 5)\nt[1:4]  # (1, 2, 3)\nt[:3]  # (0, 1, 2)\nt[::2]  # (0, 2, 4)\n```",
+      "metadata": {
+        "language": "python",
+        "category": "data-structures",
+        "topic": "tuples",
+        "section": "Slicing",
+        "difficulty": "beginner",
+        "source": "data-structures\\tuples.md"
+      }
+    },
+    {
+      "id": "chunk_9464d247eb4d",
+      "text": "## Immutability\n\nTuples cannot be modified after creation:\n\n```python\nt = (1, 2, 3)\nt[0] = 10  # TypeError: 'tuple' object does not support item assignment\n```\n\nHowever, if a tuple contains a mutable object (list), that object can be modified:\n\n```python\nt = ([1, 2], 3)\nt[0][0] = 10  # OK: ([10, 2], 3)\nt[0] = [20, 30]  # Error: tuple itself is immutable\n```",
+      "metadata": {
+        "language": "python",
+        "category": "data-structures",
+        "topic": "tuples",
+        "section": "Immutability",
+        "difficulty": "beginner",
+        "source": "data-structures\\tuples.md"
+      }
+    },
+    {
+      "id": "chunk_72af2622358c",
+      "text": "## Tuple Unpacking\n\nAssign tuple elements to multiple variables:\n\n```python\nx, y, z = (1, 2, 3)\nprint(x)  # 1\nprint(y)  # 2\n\na, b = (10, 20)\n\n# Can ignore values with _\nfirst, _, third = (1, 2, 3)\n```",
+      "metadata": {
+        "language": "python",
+        "category": "data-structures",
+        "topic": "tuples",
+        "section": "Tuple Unpacking",
+        "difficulty": "beginner",
+        "source": "data-structures\\tuples.md"
+      }
+    },
+    {
+      "id": "chunk_5c10720bc2a5",
+      "text": "## Packing\n\nCombine values into a tuple:\n\n```python\na, b, c = 1, 2, 3  # Automatically packed into tuple\nt = (a, b, c)  # Explicit packing\n```",
+      "metadata": {
+        "language": "python",
+        "category": "data-structures",
+        "topic": "tuples",
+        "section": "Packing",
+        "difficulty": "beginner",
+        "source": "data-structures\\tuples.md"
+      }
+    },
+    {
+      "id": "chunk_4288470f4473",
+      "text": "## Useful Tuple Operations\n\n**len()**: Get the number of items\n```python\nt = (1, 2, 3)\nlen(t)  # 3\n```\n\n**count()**: Count occurrences of a value\n```python\nt = (1, 2, 2, 3, 2)\nt.count(2)  # 3\n```\n\n**index()**: Find the index of a value\n```python\nt = (\"a\", \"b\", \"c\")\nt.index(\"b\")  # 1\n```\n\n**Membership testing**: Check if item exists\n```python\nt = (1, 2, 3)\n2 in t  # True\n4 in t  # False\n```",
+      "metadata": {
+        "language": "python",
+        "category": "data-structures",
+        "topic": "tuples",
+        "section": "Useful Tuple Operations",
+        "difficulty": "beginner",
+        "source": "data-structures\\tuples.md"
+      }
+    },
+    {
+      "id": "chunk_6e418379efb4",
+      "text": "## When Tuples Are Useful\n\n- As dictionary keys (lists cannot be keys because they're mutable)\n- Returning multiple values from a function\n- Protecting data that shouldn't be modified\n- Slightly better performance than lists\n- Function arguments unpacking\n\n```python\n# Multiple returns\ndef get_coordinates():\n    return (10, 20)  # Tuple\n\nx, y = get_coordinates()\n\n# Dictionary key\nlocations = {(0, 0): \"origin\", (1, 1): \"diagonal\"}\n```",
+      "metadata": {
+        "language": "python",
+        "category": "data-structures",
+        "topic": "tuples",
+        "section": "When Tuples Are Useful",
+        "difficulty": "beginner",
+        "source": "data-structures\\tuples.md"
+      }
+    },
+    {
+      "id": "chunk_8193a4093aea",
+      "text": "## Common Mistakes\n\n- Forgetting the comma in a single-element tuple: `(42)` is not a tuple\n- Trying to modify a tuple: `t[0] = 5` → TypeError\n- Confusing tuple with list syntax (parentheses vs brackets)\n- Assuming nested tuples can't be unpacked (they can with nested unpacking)",
+      "metadata": {
+        "language": "python",
+        "category": "data-structures",
+        "topic": "tuples",
+        "section": "Common Mistakes",
+        "difficulty": "beginner",
+        "source": "data-structures\\tuples.md"
+      }
+    },
+    {
+      "id": "chunk_11648885e56e",
+      "text": "## Important Notes\n\n- Tuples are immutable and hashable (can be dictionary keys)\n- Single-element tuples need a trailing comma: `(1,)`\n- Parentheses are optional for tuple creation: `1, 2, 3` is a tuple\n- Empty tuple is: `()` not `(,)`",
+      "metadata": {
+        "language": "python",
+        "category": "data-structures",
+        "topic": "tuples",
+        "section": "Important Notes",
+        "difficulty": "beginner",
+        "source": "data-structures\\tuples.md"
+      }
+    },
+    {
+      "id": "chunk_30a58a7ef59a",
+      "text": "## Related Concepts\n\n- Lists (mutable alternative)\n- Unpacking in function arguments\n- Zip function (creates tuples from iterables)\n- Named tuples (more advanced)",
+      "metadata": {
+        "language": "python",
+        "category": "data-structures",
+        "topic": "tuples",
+        "section": "Related Concepts",
+        "difficulty": "beginner",
+        "source": "data-structures\\tuples.md"
+      }
+    },
+    {
+      "id": "chunk_9b98ebdbe966",
+      "text": "## Definition\n\nAn `IndexError` occurs when you try to access an index that doesn't exist in a sequence (list, string, tuple).",
+      "metadata": {
+        "language": "python",
+        "category": "debugging",
+        "topic": "index-error",
+        "section": "Definition",
+        "difficulty": "beginner",
+        "source": "debugging\\index-error.md"
+      }
+    },
+    {
+      "id": "chunk_489878497217",
+      "text": "## List and String Indexing\n\nLists and strings use 0-based indexing:\n\n```python\nlst = [10, 20, 30, 40, 50]\nlst[0]  # 10 (first element)\nlst[4]  # 50 (last element)\nlst[5]  # IndexError: list index out of range\n```",
+      "metadata": {
+        "language": "python",
+        "category": "debugging",
+        "topic": "index-error",
+        "section": "List and String Indexing",
+        "difficulty": "beginner",
+        "source": "debugging\\index-error.md"
+      }
+    },
+    {
+      "id": "chunk_d0e309868b26",
+      "text": "## Out-of-Range Indexes\n\nAccessing an index beyond the list/string length:\n\n```python\nfruits = [\"apple\", \"banana\", \"cherry\"]\nfruits[0]  # \"apple\" - OK\nfruits[2]  # \"cherry\" - OK\nfruits[3]  # IndexError (length is 3, valid indexes are 0-2)\n```",
+      "metadata": {
+        "language": "python",
+        "category": "debugging",
+        "topic": "index-error",
+        "section": "Out-of-Range Indexes",
+        "difficulty": "beginner",
+        "source": "debugging\\index-error.md"
+      }
+    },
+    {
+      "id": "chunk_efe109fcccd9",
+      "text": "## String Indexing\n\nStrings work the same way:\n\n```python\nword = \"python\"\nword[0]  # \"p\"\nword[5]  # \"n\"\nword[6]  # IndexError\n```",
+      "metadata": {
+        "language": "python",
+        "category": "debugging",
+        "topic": "index-error",
+        "section": "String Indexing",
+        "difficulty": "beginner",
+        "source": "debugging\\index-error.md"
+      }
+    },
+    {
+      "id": "chunk_1ac317d25f91",
+      "text": "## Examples\n\n```python\n# List index error\nnumbers = [1, 2, 3]\nprint(numbers[10])  # IndexError: list index out of range\n\n# String index error\nname = \"Alice\"\nprint(name[5])  # IndexError: string index out of range\n\n# Nested list error\nmatrix = [[1, 2], [3, 4]]\nprint(matrix[2])  # IndexError: list index out of range\n```",
+      "metadata": {
+        "language": "python",
+        "category": "debugging",
+        "topic": "index-error",
+        "section": "Examples",
+        "difficulty": "beginner",
+        "source": "debugging\\index-error.md"
+      }
+    },
+    {
+      "id": "chunk_21800430ebf8",
+      "text": "## Debugging Techniques\n\n**Check the length first:**\n```python\nlst = [1, 2, 3]\nprint(len(lst))  # 3\n\n# Valid indexes: 0, 1, 2\n# Invalid: 3, 4, ... or negative < -3\n```\n\n**Use loops safely:**\n```python\n# Wrong: assumes all elements exist\nfor i in range(10):\n    print(lst[i])  # IndexError if lst has fewer than 10 items\n\n# Correct: use actual length\nfor i in range(len(lst)):\n    print(lst[i])\n\n# Better: iterate directly\nfor item in lst:\n    print(item)\n```\n\n**Print before accessing:**\n```python\nlst = [1, 2, 3]\nidx = 5\nprint(f\"List: {lst}, Index: {idx}\")\nprint(lst[idx])  # IndexError with clear context\n```",
+      "metadata": {
+        "language": "python",
+        "category": "debugging",
+        "topic": "index-error",
+        "section": "Debugging Techniques",
+        "difficulty": "beginner",
+        "source": "debugging\\index-error.md"
+      }
+    },
+    {
+      "id": "chunk_22cad04a8dad",
+      "text": "## Prevention\n\n**Know the length:**\n```python\nlst = [10, 20, 30]\nif 0 <= index < len(lst):\n    print(lst[index])\nelse:\n    print(\"Index out of range\")\n```\n\n**Use get-like access:**\n```python\n# For lists, use slice with default\ndef safe_get(lst, index, default=None):\n    return lst[index] if 0 <= index < len(lst) else default\n\nresult = safe_get([1, 2, 3], 10)  # None (no error)\n```\n\n**Use enumerate for safe iteration:**\n```python\n# Safer for iteration with indexes\nfor index, value in enumerate(lst):\n    print(f\"{index}: {value}\")\n```",
+      "metadata": {
+        "language": "python",
+        "category": "debugging",
+        "topic": "index-error",
+        "section": "Prevention",
+        "difficulty": "beginner",
+        "source": "debugging\\index-error.md"
+      }
+    },
+    {
+      "id": "chunk_dc3b47f4e7a0",
+      "text": "## Important Notes\n\n- Python allows negative indexes: `lst[-1]` is the last element\n- Out-of-bounds access raises `IndexError`, not undefined\n- Empty sequences have no valid indexes\n- String slicing is safe; it returns empty string instead of error\n\n```python\nlst = [1, 2, 3]\nlst[10]  # IndexError\n\n# Slicing is safe\nlst[1:10]  # [2, 3] (no error)\nlst[10:20]  # [] (no error)\n```",
+      "metadata": {
+        "language": "python",
+        "category": "debugging",
+        "topic": "index-error",
+        "section": "Important Notes",
+        "difficulty": "beginner",
+        "source": "debugging\\index-error.md"
+      }
+    },
+    {
+      "id": "chunk_790a6d3a9969",
+      "text": "## Related Concepts\n\n- List slicing (safe, returns subset)\n- Negative indexing\n- `range()` for safe iteration\n- `enumerate()` for index and value\n- `try-except` for error handling",
+      "metadata": {
+        "language": "python",
+        "category": "debugging",
+        "topic": "index-error",
+        "section": "Related Concepts",
+        "difficulty": "beginner",
+        "source": "debugging\\index-error.md"
+      }
+    },
+    {
+      "id": "chunk_6ae7a5b65947",
+      "text": "## Definition\n\nA `KeyError` occurs when you try to access a dictionary key that doesn't exist.",
+      "metadata": {
+        "language": "python",
+        "category": "debugging",
+        "topic": "key-error",
+        "section": "Definition",
+        "difficulty": "beginner",
+        "source": "debugging\\key-error.md"
+      }
+    },
+    {
+      "id": "chunk_56f2e8bb11ee",
+      "text": "## Dictionary Access\n\nAccessing a key with brackets:\n\n```python\nperson = {\"name\": \"Alice\", \"age\": 30}\nperson[\"name\"]  # \"Alice\" - OK\nperson[\"city\"]  # KeyError: 'city'\n```",
+      "metadata": {
+        "language": "python",
+        "category": "debugging",
+        "topic": "key-error",
+        "section": "Dictionary Access",
+        "difficulty": "beginner",
+        "source": "debugging\\key-error.md"
+      }
+    },
+    {
+      "id": "chunk_772c0495038a",
+      "text": "## Examples\n\n```python\n# Missing key\ndata = {\"a\": 1, \"b\": 2}\nprint(data[\"c\"])  # KeyError: 'c'\n\n# Nested dictionary\nuser = {\"profile\": {\"name\": \"Bob\"}}\nprint(user[\"settings\"])  # KeyError: 'settings'\n\n# From iteration\nfor key in some_dict:\n    print(data[key])  # OK (only iterates over actual keys)\n```",
+      "metadata": {
+        "language": "python",
+        "category": "debugging",
+        "topic": "key-error",
+        "section": "Examples",
+        "difficulty": "beginner",
+        "source": "debugging\\key-error.md"
+      }
+    },
+    {
+      "id": "chunk_6976b05b377d",
+      "text": "## get()\n\nAccess a value with a default if key doesn't exist:\n\n```python\nperson = {\"name\": \"Alice\", \"age\": 30}\nperson.get(\"name\")  # \"Alice\"\nperson.get(\"city\")  # None\nperson.get(\"city\", \"Unknown\")  # \"Unknown\"\n```\n\nNo KeyError is raised with `get()`.",
+      "metadata": {
+        "language": "python",
+        "category": "debugging",
+        "topic": "key-error",
+        "section": "get()",
+        "difficulty": "beginner",
+        "source": "debugging\\key-error.md"
+      }
+    },
+    {
+      "id": "chunk_19e5c5d58b06",
+      "text": "## Checking Membership\n\nTest if a key exists before accessing:\n\n```python\nperson = {\"name\": \"Alice\", \"age\": 30}\n\nif \"name\" in person:\n    print(person[\"name\"])  # Safe access\n\nif \"city\" not in person:\n    print(\"City not found\")\n```",
+      "metadata": {
+        "language": "python",
+        "category": "debugging",
+        "topic": "key-error",
+        "section": "Checking Membership",
+        "difficulty": "beginner",
+        "source": "debugging\\key-error.md"
+      }
+    },
+    {
+      "id": "chunk_973266c81f02",
+      "text": "## Debugging Techniques\n\n**Print available keys:**\n```python\ndata = {\"a\": 1, \"b\": 2}\nprint(data.keys())  # dict_keys(['a', 'b'])\n\n# Now try to access\nkey = \"c\"\nif key in data:\n    print(data[key])\nelse:\n    print(f\"Key '{key}' not found in {list(data.keys())}\")\n```\n\n**Use dictionary.get() safely:**\n```python\nconfig = {\"timeout\": 30}\ntimeout = config.get(\"timeout\", 10)  # 30\nretry_count = config.get(\"retry_count\", 3)  # 3 (default)\n```\n\n**Check for nested keys:**\n```python\nperson = {\"profile\": {\"name\": \"Bob\"}}\n\n# Unsafe\nprint(person[\"profile\"][\"email\"])  # KeyError\n\n# Safe\nif \"profile\" in person and \"email\" in person[\"profile\"]:\n    print(person[\"profile\"][\"email\"])\n```",
+      "metadata": {
+        "language": "python",
+        "category": "debugging",
+        "topic": "key-error",
+        "section": "Debugging Techniques",
+        "difficulty": "beginner",
+        "source": "debugging\\key-error.md"
+      }
+    },
+    {
+      "id": "chunk_d1ca72bce6bf",
+      "text": "## Prevention\n\n**Always use get() for optional keys:**\n```python\n# Bad: might raise KeyError\ndef get_user_email(user):\n    return user[\"email\"]\n\n# Good: handles missing key\ndef get_user_email(user):\n    return user.get(\"email\", \"No email\")\n```\n\n**Validate data before processing:**\n```python\ndef process_json(data):\n    if not isinstance(data, dict):\n        raise ValueError(\"Expected dictionary\")\n\n    name = data.get(\"name\", \"Unknown\")\n    age = data.get(\"age\", 0)\n\n    return f\"{name} ({age})\"\n```\n\n**Use setdefault for initialization:**\n```python\n# Safely add key if missing\ncache = {}\ncache.setdefault(\"counter\", 0)\ncache[\"counter\"] += 1\n```",
+      "metadata": {
+        "language": "python",
+        "category": "debugging",
+        "topic": "key-error",
+        "section": "Prevention",
+        "difficulty": "beginner",
+        "source": "debugging\\key-error.md"
+      }
+    },
+    {
+      "id": "chunk_ed55a3326469",
+      "text": "## Important Notes\n\n- Use `get()` for optional keys\n- Use bracket access `[]` only for keys you're sure exist\n- Check membership with `in` before accessing uncertain keys\n- `setdefault()` returns the value and adds key if missing",
+      "metadata": {
+        "language": "python",
+        "category": "debugging",
+        "topic": "key-error",
+        "section": "Important Notes",
+        "difficulty": "beginner",
+        "source": "debugging\\key-error.md"
+      }
+    },
+    {
+      "id": "chunk_95a9a953ed03",
+      "text": "## Related Concepts\n\n- Dictionary methods: `keys()`, `values()`, `items()`\n- `get()` vs bracket access\n- `setdefault()` for initialization\n- Dictionary comprehensions\n- JSON handling (similar structure)",
+      "metadata": {
+        "language": "python",
+        "category": "debugging",
+        "topic": "key-error",
+        "section": "Related Concepts",
+        "difficulty": "beginner",
+        "source": "debugging\\key-error.md"
+      }
+    },
+    {
+      "id": "chunk_ab6323f58601",
+      "text": "## Definition\n\nA `TypeError` occurs when an operation or function is applied to an object of an inappropriate type.",
+      "metadata": {
+        "language": "python",
+        "category": "debugging",
+        "topic": "type-error",
+        "section": "Definition",
+        "difficulty": "beginner",
+        "source": "debugging\\type-error.md"
+      }
+    },
+    {
+      "id": "chunk_dc15a7c974c8",
+      "text": "## What TypeError Means\n\nThe operation you're trying to do doesn't work with that data type:\n\n```python\n\"hello\" + 5  # TypeError: can only concatenate str (not \"int\") to str\n```",
+      "metadata": {
+        "language": "python",
+        "category": "debugging",
+        "topic": "type-error",
+        "section": "What TypeError Means",
+        "difficulty": "beginner",
+        "source": "debugging\\type-error.md"
+      }
+    },
+    {
+      "id": "chunk_d595b24b155a",
+      "text": "## Common Causes\n\n**Concatenating incompatible types:**\n```python\n\"Age: \" + 25  # TypeError: string + int\n```\n\n**Calling a non-function:**\n```python\nx = 5\nx()  # TypeError: 'int' object is not callable\n```\n\n**Wrong number of arguments:**\n```python\nlen(1, 2)  # TypeError: len() takes exactly one argument (2 given)\n```\n\n**Iterating over non-iterable:**\n```python\nfor i in 5:  # TypeError: 'int' object is not iterable\n    print(i)\n```\n\n**Using wrong type with method:**\n```python\nx = 5\nx.append(10)  # TypeError: 'int' object has no attribute 'append'\n```",
+      "metadata": {
+        "language": "python",
+        "category": "debugging",
+        "topic": "type-error",
+        "section": "Common Causes",
+        "difficulty": "beginner",
+        "source": "debugging\\type-error.md"
+      }
+    },
+    {
+      "id": "chunk_9a3d3a154414",
+      "text": "## Examples\n\n```python\n# Concatenation error\nresult = \"Hello\" + 42  # TypeError\n\n# Method error\nnum = 42\nnum.upper()  # TypeError: 'int' object has no attribute 'upper'\n\n# Operation error\nx = [1, 2, 3]\ny = x + \"error\"  # TypeError: can only concatenate list (not \"str\") to list\n```",
+      "metadata": {
+        "language": "python",
+        "category": "debugging",
+        "topic": "type-error",
+        "section": "Examples",
+        "difficulty": "beginner",
+        "source": "debugging\\type-error.md"
+      }
+    },
+    {
+      "id": "chunk_4886a655b513",
+      "text": "## How to Diagnose It\n\n1. Read the error message carefully: `TypeError: 'int' object is not callable`\n2. Find the line number causing the error\n3. Check the data type of the variable\n4. Verify it supports the operation you're trying\n\n```python\n# Diagnose\nx = 42\nprint(type(x))  # <class 'int'>\nx()  # TypeError: 'int' object is not callable\n```",
+      "metadata": {
+        "language": "python",
+        "category": "debugging",
+        "topic": "type-error",
+        "section": "How to Diagnose It",
+        "difficulty": "beginner",
+        "source": "debugging\\type-error.md"
+      }
+    },
+    {
+      "id": "chunk_35d69615369d",
+      "text": "## Common Fixes\n\n**Convert to correct type:**\n```python\n# Wrong\n\"Age: \" + 25\n\n# Fixed\n\"Age: \" + str(25)\n# Or\nf\"Age: {25}\"\n```\n\n**Use correct method/operation:**\n```python\n# Wrong\nx = 5\nx.append(10)\n\n# Fixed\nlst = [5]\nlst.append(10)\n```\n\n**Check types before operations:**\n```python\ndef add_values(a, b):\n    if not isinstance(a, (int, float)):\n        raise TypeError(f\"Expected number, got {type(a)}\")\n    if not isinstance(b, (int, float)):\n        raise TypeError(f\"Expected number, got {type(b)}\")\n    return a + b\n```",
+      "metadata": {
+        "language": "python",
+        "category": "debugging",
+        "topic": "type-error",
+        "section": "Common Fixes",
+        "difficulty": "beginner",
+        "source": "debugging\\type-error.md"
+      }
+    },
+    {
+      "id": "chunk_b91d410a2658",
+      "text": "## How to Prevent It\n\n- Use type hints to document expected types\n- Use `isinstance()` to check types before operations\n- Use descriptive variable names\n- Test with different data types\n\n```python\ndef concatenate(a: str, b: str) -> str:\n    return a + b  # Clear expectation: both are strings\n\nconcatenate(\"Hello\", 42)  # IDE will warn type mismatch\n```",
+      "metadata": {
+        "language": "python",
+        "category": "debugging",
+        "topic": "type-error",
+        "section": "How to Prevent It",
+        "difficulty": "beginner",
+        "source": "debugging\\type-error.md"
+      }
+    },
+    {
+      "id": "chunk_40edd34a6261",
+      "text": "## Important Notes\n\n- `TypeError` is different from `ValueError` (wrong type vs wrong value)\n- Python is dynamically typed, but operations require compatible types\n- Use duck typing carefully (if it looks like a duck...)\n- Error messages usually tell you exactly what's wrong",
+      "metadata": {
+        "language": "python",
+        "category": "debugging",
+        "topic": "type-error",
+        "section": "Important Notes",
+        "difficulty": "beginner",
+        "source": "debugging\\type-error.md"
+      }
+    },
+    {
+      "id": "chunk_3f41e01bd870",
+      "text": "## Related Concepts\n\n- Type hints and annotations\n- `isinstance()` and `type()`\n- Duck typing\n- Type conversion functions: `str()`, `int()`, `float()`, `list()`, etc.",
+      "metadata": {
+        "language": "python",
+        "category": "debugging",
+        "topic": "type-error",
+        "section": "Related Concepts",
+        "difficulty": "beginner",
+        "source": "debugging\\type-error.md"
+      }
+    },
+    {
+      "id": "chunk_ee45886f3568",
+      "text": "## Definition\n\nA `ValueError` occurs when a function receives an argument of the correct type but an inappropriate or invalid value.",
+      "metadata": {
+        "language": "python",
+        "category": "debugging",
+        "topic": "value-error",
+        "section": "Definition",
+        "difficulty": "beginner",
+        "source": "debugging\\value-error.md"
+      }
+    },
+    {
+      "id": "chunk_94c7308e86d9",
+      "text": "## Invalid Conversion\n\nType conversion with invalid data:\n\n```python\nint(\"42\")  # 42 - OK\nint(\"abc\")  # ValueError: invalid literal for int() with base 10: 'abc'\n\nfloat(\"3.14\")  # 3.14 - OK\nfloat(\"hello\")  # ValueError: could not convert string to float: 'hello'\n```",
+      "metadata": {
+        "language": "python",
+        "category": "debugging",
+        "topic": "value-error",
+        "section": "Invalid Conversion",
+        "difficulty": "beginner",
+        "source": "debugging\\value-error.md"
+      }
+    },
+    {
+      "id": "chunk_79f1246fff05",
+      "text": "## Invalid Function Argument Values\n\nA function gets the right type but wrong value:\n\n```python\nnumbers = [1, 2, 3, 4]\nnumbers.remove(5)  # ValueError: list.remove(x): x not in list\n\n\"hello\".index(\"x\")  # ValueError: substring not found\n```",
+      "metadata": {
+        "language": "python",
+        "category": "debugging",
+        "topic": "value-error",
+        "section": "Invalid Function Argument Values",
+        "difficulty": "beginner",
+        "source": "debugging\\value-error.md"
+      }
+    },
+    {
+      "id": "chunk_43102117a74c",
+      "text": "## Examples\n\n```python\n# Invalid conversion\nvalue = int(\"not a number\")  # ValueError\n\n# Value not in sequence\nlst = [1, 2, 3]\nlst.remove(99)  # ValueError: list.remove(x): x not in list\n\n# Unpacking with wrong count\na, b = [1, 2, 3]  # ValueError: too many values to unpack\n\n# Argument out of valid range\ndata = [1, 2, 3]\ndata.pop(10)  # IndexError (not ValueError)\n```",
+      "metadata": {
+        "language": "python",
+        "category": "debugging",
+        "topic": "value-error",
+        "section": "Examples",
+        "difficulty": "beginner",
+        "source": "debugging\\value-error.md"
+      }
+    },
+    {
+      "id": "chunk_c16baf722e6f",
+      "text": "## Debugging Techniques\n\n**Inspect the value:**\n```python\nuser_input = input(\"Enter a number: \")  # \"abc\"\nprint(f\"Input: '{user_input}'\")\n\ntry:\n    num = int(user_input)\nexcept ValueError:\n    print(f\"Could not convert '{user_input}' to int\")\n```\n\n**Validate before converting:**\n```python\ndef safe_int(value):\n    try:\n        return int(value)\n    except ValueError:\n        return None\n\nresult = safe_int(\"hello\")  # None (no error)\n```\n\n**Check if value exists:**\n```python\nitems = [10, 20, 30]\n\nif 20 in items:\n    items.remove(20)  # Safe\nelse:\n    print(\"Item not found\")\n```\n\n**Verify unpacking count:**\n```python\n# Wrong: too many values\ntry:\n    a, b = [1, 2, 3]\nexcept ValueError as e:\n    print(f\"Unpacking error: {e}\")\n\n# Correct\na, b, c = [1, 2, 3]\n```",
+      "metadata": {
+        "language": "python",
+        "category": "debugging",
+        "topic": "value-error",
+        "section": "Debugging Techniques",
+        "difficulty": "beginner",
+        "source": "debugging\\value-error.md"
+      }
+    },
+    {
+      "id": "chunk_7c256c806a41",
+      "text": "## Prevention\n\n**Validate user input:**\n```python\ndef get_positive_number():\n    while True:\n        try:\n            num = int(input(\"Enter a positive number: \"))\n            if num > 0:\n                return num\n            else:\n                print(\"Number must be positive\")\n        except ValueError:\n            print(\"Please enter a valid number\")\n```\n\n**Use try-except for conversions:**\n```python\nage_str = user_input\ntry:\n    age = int(age_str)\nexcept ValueError:\n    age = 0  # Default value\n```\n\n**Check membership before remove:**\n```python\nitem_to_remove = 99\nif item_to_remove in lst:\n    lst.remove(item_to_remove)\n```\n\n**Use index safely:**\n```python\n# Risky\nidx = text.index(\"x\")  # ValueError if not found\n\n# Safe\ntry:\n    idx = text.index(\"x\")\nexcept ValueError:\n    idx = -1\n```",
+      "metadata": {
+        "language": "python",
+        "category": "debugging",
+        "topic": "value-error",
+        "section": "Prevention",
+        "difficulty": "beginner",
+        "source": "debugging\\value-error.md"
+      }
+    },
+    {
+      "id": "chunk_6fabcb1edb31",
+      "text": "## Important Notes\n\n- `ValueError` = wrong value, not wrong type (that's `TypeError`)\n- Always validate user input before conversion\n- Use `in` operator to check membership before `remove()` or `index()`\n- Default values prevent crashes",
+      "metadata": {
+        "language": "python",
+        "category": "debugging",
+        "topic": "value-error",
+        "section": "Important Notes",
+        "difficulty": "beginner",
+        "source": "debugging\\value-error.md"
+      }
+    },
+    {
+      "id": "chunk_02fb25c940cd",
+      "text": "## Related Concepts\n\n- `TypeError` (wrong type)\n- `IndexError` (out of range)\n- `KeyError` (missing key)\n- Input validation\n- Exception handling with try-except",
+      "metadata": {
+        "language": "python",
+        "category": "debugging",
+        "topic": "value-error",
+        "section": "Related Concepts",
+        "difficulty": "beginner",
+        "source": "debugging\\value-error.md"
+      }
+    },
+    {
+      "id": "chunk_0af2515617e0",
+      "text": "## Definition\n\nExceptions are errors that occur during program execution. Exception handling allows you to catch and manage these errors gracefully instead of crashing.",
+      "metadata": {
+        "language": "python",
+        "category": "exceptions",
+        "topic": "exception-handling",
+        "section": "Definition",
+        "difficulty": "intermediate",
+        "source": "exceptions\\exception-handling.md"
+      }
+    },
+    {
+      "id": "chunk_a4192d0c6740",
+      "text": "## Exceptions\n\nCommon exceptions in Python:\n\n- `TypeError`: Wrong data type\n- `ValueError`: Invalid value\n- `IndexError`: Index out of range\n- `KeyError`: Dictionary key not found\n- `ZeroDivisionError`: Division by zero\n- `NameError`: Variable not defined\n- `AttributeError`: Attribute doesn't exist",
+      "metadata": {
+        "language": "python",
+        "category": "exceptions",
+        "topic": "exception-handling",
+        "section": "Exceptions",
+        "difficulty": "intermediate",
+        "source": "exceptions\\exception-handling.md"
+      }
+    },
+    {
+      "id": "chunk_faf9451929fe",
+      "text": "## try\n\nThe `try` block contains code that might raise an exception:\n\n```python\ntry:\n    x = 10 / 0\nexcept ZeroDivisionError:\n    print(\"Cannot divide by zero!\")\n```",
+      "metadata": {
+        "language": "python",
+        "category": "exceptions",
+        "topic": "exception-handling",
+        "section": "try",
+        "difficulty": "intermediate",
+        "source": "exceptions\\exception-handling.md"
+      }
+    },
+    {
+      "id": "chunk_b8a6a9f2d07d",
+      "text": "## except\n\nCatch and handle specific exceptions:\n\n```python\ntry:\n    number = int(\"abc\")\nexcept ValueError:\n    print(\"Invalid number format\")\n```\n\nMultiple `except` blocks:\n\n```python\ntry:\n    lst = [1, 2, 3]\n    print(lst[10])\nexcept IndexError:\n    print(\"Index out of range\")\nexcept TypeError:\n    print(\"Type error occurred\")\n```\n\nCatch multiple exceptions in one block:\n\n```python\ntry:\n    lst = [1, 2, 3]\n    print(lst[10])\nexcept (IndexError, TypeError):\n    print(\"Index or type error\")\n```",
+      "metadata": {
+        "language": "python",
+        "category": "exceptions",
+        "topic": "exception-handling",
+        "section": "except",
+        "difficulty": "intermediate",
+        "source": "exceptions\\exception-handling.md"
+      }
+    },
+    {
+      "id": "chunk_e19d19133cda",
+      "text": "## else\n\nExecutes if no exception occurs:\n\n```python\ntry:\n    x = 10 / 2\nexcept ZeroDivisionError:\n    print(\"Error!\")\nelse:\n    print(f\"Result: {x}\")  # Prints \"Result: 5.0\"\n```",
+      "metadata": {
+        "language": "python",
+        "category": "exceptions",
+        "topic": "exception-handling",
+        "section": "else",
+        "difficulty": "intermediate",
+        "source": "exceptions\\exception-handling.md"
+      }
+    },
+    {
+      "id": "chunk_674cc3869967",
+      "text": "## finally\n\nAlways executes, whether an exception occurs or not:\n\n```python\ntry:\n    file = open(\"data.txt\", \"r\")\n    data = file.read()\nexcept FileNotFoundError:\n    print(\"File not found\")\nfinally:\n    file.close()  # Always closes file\n```",
+      "metadata": {
+        "language": "python",
+        "category": "exceptions",
+        "topic": "exception-handling",
+        "section": "finally",
+        "difficulty": "intermediate",
+        "source": "exceptions\\exception-handling.md"
+      }
+    },
+    {
+      "id": "chunk_350befcb6f1c",
+      "text": "## Raising Exceptions\n\nThrow an exception manually:\n\n```python\ndef check_age(age):\n    if age < 0:\n        raise ValueError(\"Age cannot be negative\")\n    return age\n\ncheck_age(-5)  # Raises ValueError\n```",
+      "metadata": {
+        "language": "python",
+        "category": "exceptions",
+        "topic": "exception-handling",
+        "section": "Raising Exceptions",
+        "difficulty": "intermediate",
+        "source": "exceptions\\exception-handling.md"
+      }
+    },
+    {
+      "id": "chunk_36b49b6dd21b",
+      "text": "## Custom Exceptions\n\nCreate your own exception classes:\n\n```python\nclass InsufficientFundsError(Exception):\n    pass\n\nclass BankAccount:\n    def __init__(self, balance):\n        self.balance = balance\n\n    def withdraw(self, amount):\n        if amount > self.balance:\n            raise InsufficientFundsError(\"Not enough funds\")\n        self.balance -= amount\n```",
+      "metadata": {
+        "language": "python",
+        "category": "exceptions",
+        "topic": "exception-handling",
+        "section": "Custom Exceptions",
+        "difficulty": "intermediate",
+        "source": "exceptions\\exception-handling.md"
+      }
+    },
+    {
+      "id": "chunk_4d17a41d4b2c",
+      "text": "## Good Exception-Handling Practices\n\n**Catch specific exceptions:**\n```python\n# Good\ntry:\n    x = 10 / 0\nexcept ZeroDivisionError:\n    print(\"Cannot divide by zero\")\n\n# Avoid\ntry:\n    x = 10 / 0\nexcept:  # Catches all exceptions (too broad)\n    print(\"Error\")\n```\n\n**Use else and finally appropriately:**\n```python\ntry:\n    result = compute()\nexcept ValueError:\n    print(\"Invalid input\")\nelse:\n    print(f\"Success: {result}\")\nfinally:\n    cleanup()\n```\n\n**Provide context in error messages:**\n```python\ntry:\n    data = open(\"data.txt\").read()\nexcept FileNotFoundError:\n    print(\"Could not find data.txt in current directory\")\n```",
+      "metadata": {
+        "language": "python",
+        "category": "exceptions",
+        "topic": "exception-handling",
+        "section": "Good Exception-Handling Practices",
+        "difficulty": "intermediate",
+        "source": "exceptions\\exception-handling.md"
+      }
+    },
+    {
+      "id": "chunk_6794f32ba445",
+      "text": "## Common Mistakes\n\n- Using bare `except:` (catches all exceptions including system exit)\n- Not cleaning up resources (use `finally` or context managers)\n- Catching exceptions too broadly\n- Re-raising the same exception without modification\n- Ignoring exceptions silently (empty except block)",
+      "metadata": {
+        "language": "python",
+        "category": "exceptions",
+        "topic": "exception-handling",
+        "section": "Common Mistakes",
+        "difficulty": "intermediate",
+        "source": "exceptions\\exception-handling.md"
+      }
+    },
+    {
+      "id": "chunk_4e2357db2968",
+      "text": "## Important Notes\n\n- Exceptions are objects; they inherit from `BaseException`\n- Use `try-except` for expected errors\n- `else` is rarely needed; save it for significant logic\n- `finally` is best used for cleanup (files, connections)",
+      "metadata": {
+        "language": "python",
+        "category": "exceptions",
+        "topic": "exception-handling",
+        "section": "Important Notes",
+        "difficulty": "intermediate",
+        "source": "exceptions\\exception-handling.md"
+      }
+    },
+    {
+      "id": "chunk_3f3d27f4f08b",
+      "text": "## Related Concepts\n\n- Context managers (`with` statement)\n- Logging (record errors with context)\n- Exception chaining (raise from)\n- Stack traces and debugging",
+      "metadata": {
+        "language": "python",
+        "category": "exceptions",
+        "topic": "exception-handling",
+        "section": "Related Concepts",
+        "difficulty": "intermediate",
+        "source": "exceptions\\exception-handling.md"
+      }
+    },
+    {
+      "id": "chunk_c1d3d664220a",
+      "text": "## Definition\n\nA function is a reusable block of code that performs a specific task. Functions allow you to organize code, avoid repetition, and make programs easier to understand.",
+      "metadata": {
+        "language": "python",
+        "category": "functions",
+        "topic": "functions",
+        "section": "Definition",
+        "difficulty": "intermediate",
+        "source": "functions\\functions.md"
+      }
+    },
+    {
+      "id": "chunk_102c8887dff5",
+      "text": "## Defining Functions\n\nUse the `def` keyword:\n\n```python\ndef greet():\n    print(\"Hello!\")\n\ngreet()  # Call the function\n```",
+      "metadata": {
+        "language": "python",
+        "category": "functions",
+        "topic": "functions",
+        "section": "Defining Functions",
+        "difficulty": "intermediate",
+        "source": "functions\\functions.md"
+      }
+    },
+    {
+      "id": "chunk_8141ac5d4f0f",
+      "text": "## Parameters and Arguments\n\nParameters are variables in the function definition; arguments are values passed when calling:\n\n```python\ndef greet(name):\n    print(f\"Hello, {name}!\")\n\ngreet(\"Alice\")  # \"Alice\" is the argument\n```",
+      "metadata": {
+        "language": "python",
+        "category": "functions",
+        "topic": "functions",
+        "section": "Parameters and Arguments",
+        "difficulty": "intermediate",
+        "source": "functions\\functions.md"
+      }
+    },
+    {
+      "id": "chunk_60c7380e39c5",
+      "text": "## return\n\nFunctions return values using `return`:\n\n```python\ndef add(a, b):\n    return a + b\n\nresult = add(3, 5)  # result is 8\n```\n\nWithout `return`, a function returns `None`.",
+      "metadata": {
+        "language": "python",
+        "category": "functions",
+        "topic": "functions",
+        "section": "return",
+        "difficulty": "intermediate",
+        "source": "functions\\functions.md"
+      }
+    },
+    {
+      "id": "chunk_acff50e1fa19",
+      "text": "## Positional Arguments\n\nArguments passed in order:\n\n```python\ndef describe(name, age):\n    print(f\"{name} is {age} years old\")\n\ndescribe(\"Alice\", 30)  # Positional\n```",
+      "metadata": {
+        "language": "python",
+        "category": "functions",
+        "topic": "functions",
+        "section": "Positional Arguments",
+        "difficulty": "intermediate",
+        "source": "functions\\functions.md"
+      }
+    },
+    {
+      "id": "chunk_1c21f3b30f91",
+      "text": "## Keyword Arguments\n\nArguments passed with names:\n\n```python\ndef describe(name, age):\n    print(f\"{name} is {age} years old\")\n\ndescribe(age=30, name=\"Alice\")  # Keyword (order doesn't matter)\ndescribe(name=\"Bob\", age=25)  # Also OK\n```",
+      "metadata": {
+        "language": "python",
+        "category": "functions",
+        "topic": "functions",
+        "section": "Keyword Arguments",
+        "difficulty": "intermediate",
+        "source": "functions\\functions.md"
+      }
+    },
+    {
+      "id": "chunk_8765a730851b",
+      "text": "## Default Parameters\n\nParameters with default values:\n\n```python\ndef greet(name, greeting=\"Hello\"):\n    print(f\"{greeting}, {name}!\")\n\ngreet(\"Alice\")  # Uses default greeting\ngreet(\"Bob\", \"Hi\")  # Overrides default\n```",
+      "metadata": {
+        "language": "python",
+        "category": "functions",
+        "topic": "functions",
+        "section": "Default Parameters",
+        "difficulty": "intermediate",
+        "source": "functions\\functions.md"
+      }
+    },
+    {
+      "id": "chunk_0c4d23c9f6bb",
+      "text": "## *args\n\nCapture variable number of positional arguments as a tuple:\n\n```python\ndef sum_all(*args):\n    total = 0\n    for num in args:\n        total += num\n    return total\n\nsum_all(1, 2, 3)  # 6\nsum_all(10, 20)  # 30\n```",
+      "metadata": {
+        "language": "python",
+        "category": "functions",
+        "topic": "functions",
+        "section": "*args",
+        "difficulty": "intermediate",
+        "source": "functions\\functions.md"
+      }
+    },
+    {
+      "id": "chunk_dd1b659cb145",
+      "text": "## **kwargs\n\nCapture variable number of keyword arguments as a dictionary:\n\n```python\ndef print_info(**kwargs):\n    for key, value in kwargs.items():\n        print(f\"{key}: {value}\")\n\nprint_info(name=\"Alice\", age=30, city=\"NYC\")\n```",
+      "metadata": {
+        "language": "python",
+        "category": "functions",
+        "topic": "functions",
+        "section": "**kwargs",
+        "difficulty": "intermediate",
+        "source": "functions\\functions.md"
+      }
+    },
+    {
+      "id": "chunk_4f1fc656dd53",
+      "text": "## Scope: Local and Global Variables\n\nLocal variables exist only within the function; global variables exist in the module:\n\n```python\nx = 10  # Global\n\ndef func():\n    x = 5  # Local (shadowing global)\n    print(x)  # 5\n\nprint(x)  # 10 (global unchanged)\n\ndef modify_global():\n    global x\n    x = 20  # Modifies global x\n\nmodify_global()\nprint(x)  # 20\n```",
+      "metadata": {
+        "language": "python",
+        "category": "functions",
+        "topic": "functions",
+        "section": "Scope: Local and Global Variables",
+        "difficulty": "intermediate",
+        "source": "functions\\functions.md"
+      }
+    },
+    {
+      "id": "chunk_7ba74d6f966c",
+      "text": "## Docstrings\n\nDocument functions with triple-quoted strings:\n\n```python\ndef add(a, b):\n    \"\"\"\n    Add two numbers and return the result.\n\n    Args:\n        a: First number\n        b: Second number\n\n    Returns:\n        The sum of a and b\n    \"\"\"\n    return a + b\n\nhelp(add)  # Displays the docstring\n```",
+      "metadata": {
+        "language": "python",
+        "category": "functions",
+        "topic": "functions",
+        "section": "Docstrings",
+        "difficulty": "intermediate",
+        "source": "functions\\functions.md"
+      }
+    },
+    {
+      "id": "chunk_fcb78643cab3",
+      "text": "## Common Mistakes\n\n- Missing `return` when a value is expected\n- Forgetting to use `global` when modifying global variables\n- Mutable default arguments: `def func(lst=[]):` (list is shared across calls)\n- Using `*args` and `**kwargs` in the wrong order\n- Not using keyword arguments for clarity with many parameters",
+      "metadata": {
+        "language": "python",
+        "category": "functions",
+        "topic": "functions",
+        "section": "Common Mistakes",
+        "difficulty": "intermediate",
+        "source": "functions\\functions.md"
+      }
+    },
+    {
+      "id": "chunk_8b9bd3804f15",
+      "text": "## Important Notes\n\n- Functions should have a single responsibility\n- Use descriptive names for functions and parameters\n- Use default parameters for optional arguments\n- Return early from functions to simplify logic",
+      "metadata": {
+        "language": "python",
+        "category": "functions",
+        "topic": "functions",
+        "section": "Important Notes",
+        "difficulty": "intermediate",
+        "source": "functions\\functions.md"
+      }
+    },
+    {
+      "id": "chunk_b773fe43d459",
+      "text": "## Related Concepts\n\n- Lambda functions (anonymous functions)\n- Decorators (functions that modify functions)\n- *args and **kwargs unpacking\n- Type hints for function annotations",
+      "metadata": {
+        "language": "python",
+        "category": "functions",
+        "topic": "functions",
+        "section": "Related Concepts",
+        "difficulty": "intermediate",
+        "source": "functions\\functions.md"
+      }
+    },
+    {
+      "id": "chunk_db05c80bfed2",
+      "text": "## Definition\n\nA lambda is a small anonymous function defined with `lambda` keyword. Lambdas are useful for short, simple operations where defining a full function with `def` would be overkill.",
+      "metadata": {
+        "language": "python",
+        "category": "functions",
+        "topic": "lambda",
+        "section": "Definition",
+        "difficulty": "intermediate",
+        "source": "functions\\lambda.md"
+      }
+    },
+    {
+      "id": "chunk_b2ab7997db4b",
+      "text": "## Lambda Syntax\n\n```python\nlambda parameters: expression\n```\n\nExample:\n\n```python\nsquare = lambda x: x ** 2\nsquare(5)  # 25\n\nadd = lambda x, y: x + y\nadd(3, 4)  # 7\n```",
+      "metadata": {
+        "language": "python",
+        "category": "functions",
+        "topic": "lambda",
+        "section": "Lambda Syntax",
+        "difficulty": "intermediate",
+        "source": "functions\\lambda.md"
+      }
+    },
+    {
+      "id": "chunk_1b7122a1314d",
+      "text": "## Parameters\n\nLambdas can take multiple parameters:\n\n```python\nmultiply = lambda x, y, z: x * y * z\nmultiply(2, 3, 4)  # 24\n```",
+      "metadata": {
+        "language": "python",
+        "category": "functions",
+        "topic": "lambda",
+        "section": "Parameters",
+        "difficulty": "intermediate",
+        "source": "functions\\lambda.md"
+      }
+    },
+    {
+      "id": "chunk_88f43d435d21",
+      "text": "## Return Expression\n\nLambdas automatically return the result of the expression:\n\n```python\ndouble = lambda x: x * 2\ndouble(5)  # 10\n```\n\nOnly one expression is allowed (no multi-line logic).",
+      "metadata": {
+        "language": "python",
+        "category": "functions",
+        "topic": "lambda",
+        "section": "Return Expression",
+        "difficulty": "intermediate",
+        "source": "functions\\lambda.md"
+      }
+    },
+    {
+      "id": "chunk_44d18d9742cd",
+      "text": "## Lambda with sorted()\n\nSort with a custom key:\n\n```python\nstudents = [(\"Alice\", 85), (\"Bob\", 92), (\"Charlie\", 78)]\nsorted(students, key=lambda x: x[1])  # Sort by grade\n# [(\"Charlie\", 78), (\"Alice\", 85), (\"Bob\", 92)]\n```",
+      "metadata": {
+        "language": "python",
+        "category": "functions",
+        "topic": "lambda",
+        "section": "Lambda with sorted()",
+        "difficulty": "intermediate",
+        "source": "functions\\lambda.md"
+      }
+    },
+    {
+      "id": "chunk_bd2e58d0c5d7",
+      "text": "## Lambda with map()\n\nApply a function to all items in an iterable:\n\n```python\nnumbers = [1, 2, 3, 4, 5]\nsquared = map(lambda x: x**2, numbers)\nlist(squared)  # [1, 4, 9, 16, 25]\n```",
+      "metadata": {
+        "language": "python",
+        "category": "functions",
+        "topic": "lambda",
+        "section": "Lambda with map()",
+        "difficulty": "intermediate",
+        "source": "functions\\lambda.md"
+      }
+    },
+    {
+      "id": "chunk_0a9c24fe75db",
+      "text": "## Lambda with filter()\n\nFilter items based on a condition:\n\n```python\nnumbers = [1, 2, 3, 4, 5, 6, 7, 8]\nevens = filter(lambda x: x % 2 == 0, numbers)\nlist(evens)  # [2, 4, 6, 8]\n```",
+      "metadata": {
+        "language": "python",
+        "category": "functions",
+        "topic": "lambda",
+        "section": "Lambda with filter()",
+        "difficulty": "intermediate",
+        "source": "functions\\lambda.md"
+      }
+    },
+    {
+      "id": "chunk_dc32792203a9",
+      "text": "## Limitations of Lambda\n\nLambdas cannot contain:\n- Multiple statements (only one expression)\n- Variable assignments\n- Loops or conditionals (except ternary operator)\n- Complex logic\n\n```python\n# This works\nshort = lambda x: x if x > 0 else 0\n\n# This doesn't work in a lambda\n# lambda x: x += 1  # SyntaxError\n# lambda x: if x > 0: return x  # SyntaxError\n```",
+      "metadata": {
+        "language": "python",
+        "category": "functions",
+        "topic": "lambda",
+        "section": "Limitations of Lambda",
+        "difficulty": "intermediate",
+        "source": "functions\\lambda.md"
+      }
+    },
+    {
+      "id": "chunk_c4a4de3c7158",
+      "text": "## When Normal def Is Better\n\nUse `def` for:\n- Reusable functions used multiple times\n- Complex logic requiring multiple statements\n- Functions needing documentation\n- Clarity and readability\n\n```python\n# Better as a regular function\ndef categorize_age(age):\n    if age < 13:\n        return \"Child\"\n    elif age < 18:\n        return \"Teenager\"\n    else:\n        return \"Adult\"\n```\n\nLambdas are best for:\n- One-time use functions\n- Short, simple operations\n- Passing to functions like `map()`, `filter()`, `sorted()`",
+      "metadata": {
+        "language": "python",
+        "category": "functions",
+        "topic": "lambda",
+        "section": "When Normal def Is Better",
+        "difficulty": "intermediate",
+        "source": "functions\\lambda.md"
+      }
+    },
+    {
+      "id": "chunk_25c61cf539d1",
+      "text": "## Common Mistakes\n\n- Using lambda for complex logic (hard to read and debug)\n- Assigning lambda to variable when `def` is clearer\n- Forgetting that lambda returns one expression (no statements)\n- Using lambda when a built-in function or simple expression works",
+      "metadata": {
+        "language": "python",
+        "category": "functions",
+        "topic": "lambda",
+        "section": "Common Mistakes",
+        "difficulty": "intermediate",
+        "source": "functions\\lambda.md"
+      }
+    },
+    {
+      "id": "chunk_ce10a569c02d",
+      "text": "## Important Notes\n\n- Lambdas are less readable than named functions\n- Use lambdas sparingly for clarity\n- Lambda code is harder to debug (no name in tracebacks)\n- Most lambda uses can be replaced with comprehensions or generator expressions",
+      "metadata": {
+        "language": "python",
+        "category": "functions",
+        "topic": "lambda",
+        "section": "Important Notes",
+        "difficulty": "intermediate",
+        "source": "functions\\lambda.md"
+      }
+    },
+    {
+      "id": "chunk_e05a1aecbb82",
+      "text": "## Related Concepts\n\n- Map, filter functions\n- Sorted with custom keys\n- List comprehensions (often clearer than map/filter)\n- Decorators (advanced function manipulation)",
+      "metadata": {
+        "language": "python",
+        "category": "functions",
+        "topic": "lambda",
+        "section": "Related Concepts",
+        "difficulty": "intermediate",
+        "source": "functions\\lambda.md"
+      }
+    },
+    {
+      "id": "chunk_5070d64b638c",
+      "text": "## Definition\n\nConditional statements control the flow of a program by executing different code based on whether a condition is true or false.",
+      "metadata": {
+        "language": "python",
+        "category": "fundamentals",
+        "topic": "conditions",
+        "section": "Definition",
+        "difficulty": "beginner",
+        "source": "fundamentals\\conditions.md"
+      }
+    },
+    {
+      "id": "chunk_67a691573722",
+      "text": "## if, elif, else\n\nBasic structure:\n\n```python\nif condition:\n    # Execute if condition is True\nelif another_condition:\n    # Execute if another_condition is True (only if first is False)\nelse:\n    # Execute if all previous conditions are False\n```\n\nExample:\n\n```python\nage = 15\nif age >= 18:\n    print(\"Adult\")\nelif age >= 13:\n    print(\"Teenager\")\nelse:\n    print(\"Child\")\n```",
+      "metadata": {
+        "language": "python",
+        "category": "fundamentals",
+        "topic": "conditions",
+        "section": "if, elif, else",
+        "difficulty": "beginner",
+        "source": "fundamentals\\conditions.md"
+      }
+    },
+    {
+      "id": "chunk_18edd1622e95",
+      "text": "## Comparison Operators\n\n- `==`: Equal to\n- `!=`: Not equal to\n- `<`: Less than\n- `>`: Greater than\n- `<=`: Less than or equal to\n- `>=`: Greater than or equal to\n\n```python\nx = 10\nx == 10  # True\nx > 5    # True\nx != 10  # False\n```",
+      "metadata": {
+        "language": "python",
+        "category": "fundamentals",
+        "topic": "conditions",
+        "section": "Comparison Operators",
+        "difficulty": "beginner",
+        "source": "fundamentals\\conditions.md"
+      }
+    },
+    {
+      "id": "chunk_9279e25526ce",
+      "text": "## Logical Operators\n\n- `and`: Both conditions must be True\n- `or`: At least one condition must be True\n- `not`: Inverts the condition\n\n```python\nage = 20\nhas_license = True\n\nif age >= 18 and has_license:\n    print(\"Can drive\")\n\nif not has_license:\n    print(\"No license\")\n```",
+      "metadata": {
+        "language": "python",
+        "category": "fundamentals",
+        "topic": "conditions",
+        "section": "Logical Operators",
+        "difficulty": "beginner",
+        "source": "fundamentals\\conditions.md"
+      }
+    },
+    {
+      "id": "chunk_97ac9f8857ce",
+      "text": "## Nested Conditions\n\nConditions inside other conditions:\n\n```python\nage = 16\nhas_license = True\n\nif age >= 16:\n    if has_license:\n        print(\"Can drive\")\n    else:\n        print(\"Get a license first\")\nelse:\n    print(\"Too young\")\n```",
+      "metadata": {
+        "language": "python",
+        "category": "fundamentals",
+        "topic": "conditions",
+        "section": "Nested Conditions",
+        "difficulty": "beginner",
+        "source": "fundamentals\\conditions.md"
+      }
+    },
+    {
+      "id": "chunk_6701070cf19c",
+      "text": "## Truthy and Falsy Values\n\nIn Python, any value can be used in a boolean context:\n\n**Falsy values**: `False`, `0`, `0.0`, `\"\"`, `[]`, `{}`, `()`, `None`\n\n**Truthy values**: Everything else (non-zero numbers, non-empty strings/lists, etc.)\n\n```python\nif \"hello\":  # True (non-empty string)\n    print(\"This prints\")\n\nif 0:  # False\n    print(\"This doesn't print\")\n\nif []:  # False (empty list)\n    print(\"This doesn't print\")\n```",
+      "metadata": {
+        "language": "python",
+        "category": "fundamentals",
+        "topic": "conditions",
+        "section": "Truthy and Falsy Values",
+        "difficulty": "beginner",
+        "source": "fundamentals\\conditions.md"
+      }
+    },
+    {
+      "id": "chunk_5ffa19ee8fcf",
+      "text": "## Conditional Expressions (Ternary Operator)\n\nCompact form of if-else on a single line:\n\n```python\nvalue_if_true if condition else value_if_false\n```\n\nExample:\n\n```python\nage = 20\nstatus = \"Adult\" if age >= 18 else \"Minor\"\nprint(status)  # \"Adult\"\n```",
+      "metadata": {
+        "language": "python",
+        "category": "fundamentals",
+        "topic": "conditions",
+        "section": "Conditional Expressions (Ternary Operator)",
+        "difficulty": "beginner",
+        "source": "fundamentals\\conditions.md"
+      }
+    },
+    {
+      "id": "chunk_9bcecfcac487",
+      "text": "## Common Mistakes\n\n- Using `=` instead of `==` in conditions: `if x = 5:` → error\n- Forgetting colons after `if`, `elif`, `else`\n- Indentation errors (Python requires proper indentation)\n- Using `and`/`or` incorrectly with multiple values",
+      "metadata": {
+        "language": "python",
+        "category": "fundamentals",
+        "topic": "conditions",
+        "section": "Common Mistakes",
+        "difficulty": "beginner",
+        "source": "fundamentals\\conditions.md"
+      }
+    },
+    {
+      "id": "chunk_51b4b3c25c5e",
+      "text": "## Important Notes\n\n- Always use `==` for comparison, not `=` (which assigns)\n- Indentation is critical in Python\n- Conditions don't need parentheses (but they're allowed)\n- `elif` is short for \"else if\"",
+      "metadata": {
+        "language": "python",
+        "category": "fundamentals",
+        "topic": "conditions",
+        "section": "Important Notes",
+        "difficulty": "beginner",
+        "source": "fundamentals\\conditions.md"
+      }
+    },
+    {
+      "id": "chunk_48996d592d9c",
+      "text": "## Related Concepts\n\n- Boolean data type and truth values\n- Comparison operators\n- Loops (which often use conditions)\n- Functions with conditional logic",
+      "metadata": {
+        "language": "python",
+        "category": "fundamentals",
+        "topic": "conditions",
+        "section": "Related Concepts",
+        "difficulty": "beginner",
+        "source": "fundamentals\\conditions.md"
+      }
+    },
+    {
+      "id": "chunk_a53873718c24",
+      "text": "## Definition\n\nLoops allow you to execute a block of code repeatedly. Python has two types of loops: `for` and `while`.",
+      "metadata": {
+        "language": "python",
+        "category": "fundamentals",
+        "topic": "loops",
+        "section": "Definition",
+        "difficulty": "beginner",
+        "source": "fundamentals\\loops.md"
+      }
+    },
+    {
+      "id": "chunk_9555f931c3c9",
+      "text": "## for Loop\n\nIterates over a sequence (list, string, range, etc.):\n\n```python\nfor item in sequence:\n    # Execute for each item\n```\n\nExample:\n\n```python\nfor i in range(5):\n    print(i)  # Prints 0, 1, 2, 3, 4\n\nfor letter in \"hello\":\n    print(letter)  # Prints h, e, l, l, o\n```",
+      "metadata": {
+        "language": "python",
+        "category": "fundamentals",
+        "topic": "loops",
+        "section": "for Loop",
+        "difficulty": "beginner",
+        "source": "fundamentals\\loops.md"
+      }
+    },
+    {
+      "id": "chunk_eb69b764640a",
+      "text": "## while Loop\n\nContinues as long as a condition is True:\n\n```python\nwhile condition:\n    # Execute while condition is True\n```\n\nExample:\n\n```python\ncount = 0\nwhile count < 5:\n    print(count)\n    count += 1  # Must change condition to avoid infinite loop\n```",
+      "metadata": {
+        "language": "python",
+        "category": "fundamentals",
+        "topic": "loops",
+        "section": "while Loop",
+        "difficulty": "beginner",
+        "source": "fundamentals\\loops.md"
+      }
+    },
+    {
+      "id": "chunk_39aa36fa407f",
+      "text": "## range()\n\nGenerates a sequence of numbers:\n\n```python\nrange(5)  # 0, 1, 2, 3, 4\nrange(2, 8)  # 2, 3, 4, 5, 6, 7 (start, stop)\nrange(0, 10, 2)  # 0, 2, 4, 6, 8 (start, stop, step)\n```",
+      "metadata": {
+        "language": "python",
+        "category": "fundamentals",
+        "topic": "loops",
+        "section": "range()",
+        "difficulty": "beginner",
+        "source": "fundamentals\\loops.md"
+      }
+    },
+    {
+      "id": "chunk_4fc9a3a7987f",
+      "text": "## break\n\nExits the loop immediately:\n\n```python\nfor i in range(10):\n    if i == 5:\n        break\n    print(i)  # Prints 0, 1, 2, 3, 4\n```",
+      "metadata": {
+        "language": "python",
+        "category": "fundamentals",
+        "topic": "loops",
+        "section": "break",
+        "difficulty": "beginner",
+        "source": "fundamentals\\loops.md"
+      }
+    },
+    {
+      "id": "chunk_b74b95cdc96e",
+      "text": "## continue\n\nSkips the current iteration and goes to the next:\n\n```python\nfor i in range(5):\n    if i == 2:\n        continue\n    print(i)  # Prints 0, 1, 3, 4 (skips 2)\n```",
+      "metadata": {
+        "language": "python",
+        "category": "fundamentals",
+        "topic": "loops",
+        "section": "continue",
+        "difficulty": "beginner",
+        "source": "fundamentals\\loops.md"
+      }
+    },
+    {
+      "id": "chunk_1cc3f15447ca",
+      "text": "## pass\n\nDoes nothing; used as a placeholder:\n\n```python\nfor i in range(5):\n    if i == 2:\n        pass  # Placeholder for future code\n    else:\n        print(i)\n```",
+      "metadata": {
+        "language": "python",
+        "category": "fundamentals",
+        "topic": "loops",
+        "section": "pass",
+        "difficulty": "beginner",
+        "source": "fundamentals\\loops.md"
+      }
+    },
+    {
+      "id": "chunk_f5fce9cc74e7",
+      "text": "## Nested Loops\n\nLoops inside loops:\n\n```python\nfor i in range(3):\n    for j in range(2):\n        print(f\"i={i}, j={j}\")\n```",
+      "metadata": {
+        "language": "python",
+        "category": "fundamentals",
+        "topic": "loops",
+        "section": "Nested Loops",
+        "difficulty": "beginner",
+        "source": "fundamentals\\loops.md"
+      }
+    },
+    {
+      "id": "chunk_7f85622c6d1f",
+      "text": "## Loop else\n\nExecutes after the loop completes normally (not broken):\n\n```python\nfor i in range(5):\n    if i == 10:\n        break\nelse:\n    print(\"Loop completed normally\")  # This prints\n\nfor i in range(5):\n    if i == 3:\n        break\nelse:\n    print(\"This doesn't print\")  # Break was executed\n```",
+      "metadata": {
+        "language": "python",
+        "category": "fundamentals",
+        "topic": "loops",
+        "section": "Loop else",
+        "difficulty": "beginner",
+        "source": "fundamentals\\loops.md"
+      }
+    },
+    {
+      "id": "chunk_cd37c6e33298",
+      "text": "## Iterating Collections\n\n**Lists:**\n```python\nfruits = [\"apple\", \"banana\", \"cherry\"]\nfor fruit in fruits:\n    print(fruit)\n```\n\n**Dictionaries:**\n```python\nperson = {\"name\": \"Alice\", \"age\": 30}\nfor key in person:\n    print(key, person[key])\n```\n\n**With index:**\n```python\nfor index, item in enumerate([\"a\", \"b\", \"c\"]):\n    print(index, item)  # 0 a, 1 b, 2 c\n```",
+      "metadata": {
+        "language": "python",
+        "category": "fundamentals",
+        "topic": "loops",
+        "section": "Iterating Collections",
+        "difficulty": "beginner",
+        "source": "fundamentals\\loops.md"
+      }
+    },
+    {
+      "id": "chunk_2646002ca89a",
+      "text": "## Common Mistakes\n\n- Infinite loops: forgetting to update the condition in `while`\n- Off-by-one errors: `range(5)` is 0-4, not 1-5\n- Modifying a list while iterating over it (can skip items)\n- Using `break` instead of `continue` when you only want to skip one iteration",
+      "metadata": {
+        "language": "python",
+        "category": "fundamentals",
+        "topic": "loops",
+        "section": "Common Mistakes",
+        "difficulty": "beginner",
+        "source": "fundamentals\\loops.md"
+      }
+    },
+    {
+      "id": "chunk_4c2983b15759",
+      "text": "## Important Notes\n\n- `range()` does not include the stop value\n- `break` exits the loop; `continue` skips to the next iteration\n- Indentation determines which code is inside the loop\n- `for` loops are generally preferred over `while` when iterating collections",
+      "metadata": {
+        "language": "python",
+        "category": "fundamentals",
+        "topic": "loops",
+        "section": "Important Notes",
+        "difficulty": "beginner",
+        "source": "fundamentals\\loops.md"
+      }
+    },
+    {
+      "id": "chunk_66a895cab308",
+      "text": "## Related Concepts\n\n- Conditional statements (if/elif/else)\n- Collections (lists, strings, dicts)\n- enumerate() for index and value\n- List comprehensions (compact loops)",
+      "metadata": {
+        "language": "python",
+        "category": "fundamentals",
+        "topic": "loops",
+        "section": "Related Concepts",
+        "difficulty": "beginner",
+        "source": "fundamentals\\loops.md"
+      }
+    },
+    {
+      "id": "chunk_9517ad86fc06",
+      "text": "## Definition\n\nA variable is a name that refers to a value in memory. Python is dynamically typed—you don't declare the type; it's inferred from the value. Python has several built-in data types for different kinds of data.",
+      "metadata": {
+        "language": "python",
+        "category": "fundamentals",
+        "topic": "variables-and-data-types",
+        "section": "Definition",
+        "difficulty": "beginner",
+        "source": "fundamentals\\variables-and-data-types.md"
+      }
+    },
+    {
+      "id": "chunk_dc6844beac16",
+      "text": "## Variable Assignment\n\nVariables are created when you assign a value using `=`:\n\n```python\nname = \"Alice\"\nage = 25\ntemperature = 98.6\n```\n\nPython allows multiple assignments:\n\n```python\nx = y = z = 0  # All three variables get 0\na, b, c = 1, 2, 3  # Tuple unpacking\n```",
+      "metadata": {
+        "language": "python",
+        "category": "fundamentals",
+        "topic": "variables-and-data-types",
+        "section": "Variable Assignment",
+        "difficulty": "beginner",
+        "source": "fundamentals\\variables-and-data-types.md"
+      }
+    },
+    {
+      "id": "chunk_779a02631eb9",
+      "text": "## Naming Rules\n\n- Must start with a letter (a-z, A-Z) or underscore `_`\n- Can contain letters, numbers (0-9), and underscores\n- Case-sensitive: `age` and `Age` are different variables\n- Avoid Python keywords: `if`, `for`, `while`, `def`, `class`, etc.\n- Use descriptive names: `student_age` instead of `a`",
+      "metadata": {
+        "language": "python",
+        "category": "fundamentals",
+        "topic": "variables-and-data-types",
+        "section": "Naming Rules",
+        "difficulty": "beginner",
+        "source": "fundamentals\\variables-and-data-types.md"
+      }
+    },
+    {
+      "id": "chunk_2fb09209455d",
+      "text": "## Numeric Types",
+      "metadata": {
+        "language": "python",
+        "category": "fundamentals",
+        "topic": "variables-and-data-types",
+        "section": "Numeric Types",
+        "difficulty": "beginner",
+        "source": "fundamentals\\variables-and-data-types.md"
+      }
+    },
+    {
+      "id": "chunk_43e1acfd1706",
+      "text": "### int\nWhole numbers, positive or negative, unlimited precision:\n\n```python\nx = 42\ny = -10\nz = 0\n```",
+      "metadata": {
+        "language": "python",
+        "category": "fundamentals",
+        "topic": "variables-and-data-types",
+        "section": "int",
+        "difficulty": "beginner",
+        "source": "fundamentals\\variables-and-data-types.md"
+      }
+    },
+    {
+      "id": "chunk_dd7ba679f6d1",
+      "text": "### float\nNumbers with a decimal point or scientific notation:\n\n```python\npi = 3.14\ne = 2.7e-4  # Scientific notation (0.00027)\ntemp = -273.15\n```",
+      "metadata": {
+        "language": "python",
+        "category": "fundamentals",
+        "topic": "variables-and-data-types",
+        "section": "float",
+        "difficulty": "beginner",
+        "source": "fundamentals\\variables-and-data-types.md"
+      }
+    },
+    {
+      "id": "chunk_0ff7cd83f30e",
+      "text": "### complex\nNumbers with real and imaginary parts (for advanced math):\n\n```python\nc = 3 + 4j\n```",
+      "metadata": {
+        "language": "python",
+        "category": "fundamentals",
+        "topic": "variables-and-data-types",
+        "section": "complex",
+        "difficulty": "beginner",
+        "source": "fundamentals\\variables-and-data-types.md"
+      }
+    },
+    {
+      "id": "chunk_de1aee9cac0f",
+      "text": "## bool\nBoolean values represent truth: `True` or `False` (capitalized):\n\n```python\nis_student = True\nhas_passed = False\n```",
+      "metadata": {
+        "language": "python",
+        "category": "fundamentals",
+        "topic": "variables-and-data-types",
+        "section": "bool",
+        "difficulty": "beginner",
+        "source": "fundamentals\\variables-and-data-types.md"
+      }
+    },
+    {
+      "id": "chunk_3157f4ac8b88",
+      "text": "## str\nString is a sequence of characters enclosed in quotes (single, double, or triple):\n\n```python\nname = \"Bob\"\nmessage = 'Hello World'\nmultiline = \"\"\"This is a\nmultiline string\"\"\"\n```",
+      "metadata": {
+        "language": "python",
+        "category": "fundamentals",
+        "topic": "variables-and-data-types",
+        "section": "str",
+        "difficulty": "beginner",
+        "source": "fundamentals\\variables-and-data-types.md"
+      }
+    },
+    {
+      "id": "chunk_508c5501c0d6",
+      "text": "## None\nRepresents the absence of a value:\n\n```python\nresult = None  # Often used as a default or placeholder\n```",
+      "metadata": {
+        "language": "python",
+        "category": "fundamentals",
+        "topic": "variables-and-data-types",
+        "section": "None",
+        "difficulty": "beginner",
+        "source": "fundamentals\\variables-and-data-types.md"
+      }
+    },
+    {
+      "id": "chunk_7a0f475d2930",
+      "text": "## type()\nReturns the data type of a value:\n\n```python\ntype(42)  # <class 'int'>\ntype(3.14)  # <class 'float'>\ntype(\"hello\")  # <class 'str'>\ntype(True)  # <class 'bool'>\ntype(None)  # <class 'NoneType'>\n```",
+      "metadata": {
+        "language": "python",
+        "category": "fundamentals",
+        "topic": "variables-and-data-types",
+        "section": "type()",
+        "difficulty": "beginner",
+        "source": "fundamentals\\variables-and-data-types.md"
+      }
+    },
+    {
+      "id": "chunk_19a17fc98975",
+      "text": "## Type Conversion\n\nConvert between types using type names as functions:\n\n```python\nint(\"42\")  # 42\nfloat(\"3.14\")  # 3.14\nstr(100)  # \"100\"\nbool(1)  # True\nbool(0)  # False\nbool(\"\")  # False (empty string is falsy)\n```",
+      "metadata": {
+        "language": "python",
+        "category": "fundamentals",
+        "topic": "variables-and-data-types",
+        "section": "Type Conversion",
+        "difficulty": "beginner",
+        "source": "fundamentals\\variables-and-data-types.md"
+      }
+    },
+    {
+      "id": "chunk_a9e7decc09ad",
+      "text": "## Mutable vs Immutable (Basics)\n\n- **Immutable**: Cannot change after creation (int, float, str, bool, tuple)\n- **Mutable**: Can be modified in place (list, dict, set)\n\n```python\nx = \"hello\"\nx[0] = \"H\"  # Error: strings are immutable\n\nlst = [1, 2, 3]\nlst[0] = 10  # Works: lists are mutable\n```",
+      "metadata": {
+        "language": "python",
+        "category": "fundamentals",
+        "topic": "variables-and-data-types",
+        "section": "Mutable vs Immutable (Basics)",
+        "difficulty": "beginner",
+        "source": "fundamentals\\variables-and-data-types.md"
+      }
+    },
+    {
+      "id": "chunk_4809e7bff28a",
+      "text": "## Common Mistakes\n\n- Using Python keywords as variable names: `for = 5` → error\n- Expecting type conversion to always work: `int(\"abc\")` → error\n- Confusing `=` (assignment) with `==` (comparison)\n- Modifying a string in place (strings are immutable)",
+      "metadata": {
+        "language": "python",
+        "category": "fundamentals",
+        "topic": "variables-and-data-types",
+        "section": "Common Mistakes",
+        "difficulty": "beginner",
+        "source": "fundamentals\\variables-and-data-types.md"
+      }
+    },
+    {
+      "id": "chunk_2ae811e03864",
+      "text": "## Important Notes\n\n- Python variables don't have fixed types; reassigning changes the type\n- `None` is not the same as `0`, `\"\"`, or `False`\n- Use `type()` to check actual data type\n- Prefer descriptive variable names for readable code",
+      "metadata": {
+        "language": "python",
+        "category": "fundamentals",
+        "topic": "variables-and-data-types",
+        "section": "Important Notes",
+        "difficulty": "beginner",
+        "source": "fundamentals\\variables-and-data-types.md"
+      }
+    },
+    {
+      "id": "chunk_06c0f9a150fe",
+      "text": "## Related Concepts\n\n- Type checking: `isinstance()`, `type()`\n- Containers (lists, dicts, tuples) for storing multiple values\n- Operators for working with different types",
+      "metadata": {
+        "language": "python",
+        "category": "fundamentals",
+        "topic": "variables-and-data-types",
+        "section": "Related Concepts",
+        "difficulty": "beginner",
+        "source": "fundamentals\\variables-and-data-types.md"
+      }
+    },
+    {
+      "id": "chunk_fa56a0d9badd",
+      "text": "## Definition\n\nA class is a blueprint for creating objects. Classes bundle data (attributes) and functions (methods) together.",
+      "metadata": {
+        "language": "python",
+        "category": "oop",
+        "topic": "classes",
+        "section": "Definition",
+        "difficulty": "intermediate",
+        "source": "oop\\classes.md"
+      }
+    },
+    {
+      "id": "chunk_b2c3cfda5115",
+      "text": "## Classes\n\nDefine a class with `class`:\n\n```python\nclass Dog:\n    def __init__(self, name, age):\n        self.name = name\n        self.age = age\n\n    def bark(self):\n        print(f\"{self.name} says woof!\")\n\ndog = Dog(\"Buddy\", 3)\ndog.bark()  # \"Buddy says woof!\"\n```",
+      "metadata": {
+        "language": "python",
+        "category": "oop",
+        "topic": "classes",
+        "section": "Classes",
+        "difficulty": "intermediate",
+        "source": "oop\\classes.md"
+      }
+    },
+    {
+      "id": "chunk_2f753e952062",
+      "text": "## Objects\n\nAn object is an instance of a class:\n\n```python\ndog1 = Dog(\"Buddy\", 3)\ndog2 = Dog(\"Max\", 5)\n```\n\nEach object has its own data.",
+      "metadata": {
+        "language": "python",
+        "category": "oop",
+        "topic": "classes",
+        "section": "Objects",
+        "difficulty": "intermediate",
+        "source": "oop\\classes.md"
+      }
+    },
+    {
+      "id": "chunk_a88839d7ca2f",
+      "text": "## __init__\n\nThe constructor method, called when creating an object:\n\n```python\nclass Person:\n    def __init__(self, name, age):\n        self.name = name\n        self.age = age\n\nperson = Person(\"Alice\", 30)  # __init__ is called automatically\n```",
+      "metadata": {
+        "language": "python",
+        "category": "oop",
+        "topic": "classes",
+        "section": "__init__",
+        "difficulty": "intermediate",
+        "source": "oop\\classes.md"
+      }
+    },
+    {
+      "id": "chunk_2aa82467f161",
+      "text": "## self\n\nReference to the object itself. The first parameter in any method:\n\n```python\nclass Dog:\n    def __init__(self, name):\n        self.name = name  # self refers to the object\n\n    def greet(self):\n        print(f\"I am {self.name}\")  # Accessing self.name\n```",
+      "metadata": {
+        "language": "python",
+        "category": "oop",
+        "topic": "classes",
+        "section": "self",
+        "difficulty": "intermediate",
+        "source": "oop\\classes.md"
+      }
+    },
+    {
+      "id": "chunk_fa2194a8b1be",
+      "text": "## Instance Attributes\n\nData specific to each object:\n\n```python\nclass Car:\n    def __init__(self, make, model):\n        self.make = make  # Instance attribute\n        self.model = model\n\ncar = Car(\"Toyota\", \"Camry\")\nprint(car.make)  # \"Toyota\"\n```",
+      "metadata": {
+        "language": "python",
+        "category": "oop",
+        "topic": "classes",
+        "section": "Instance Attributes",
+        "difficulty": "intermediate",
+        "source": "oop\\classes.md"
+      }
+    },
+    {
+      "id": "chunk_6bbfb0353faf",
+      "text": "## Instance Methods\n\nFunctions that operate on an object:\n\n```python\nclass BankAccount:\n    def __init__(self, balance):\n        self.balance = balance\n\n    def deposit(self, amount):\n        self.balance += amount\n\n    def withdraw(self, amount):\n        self.balance -= amount\n\n    def get_balance(self):\n        return self.balance\n\naccount = BankAccount(100)\naccount.deposit(50)\nprint(account.get_balance())  # 150\n```",
+      "metadata": {
+        "language": "python",
+        "category": "oop",
+        "topic": "classes",
+        "section": "Instance Methods",
+        "difficulty": "intermediate",
+        "source": "oop\\classes.md"
+      }
+    },
+    {
+      "id": "chunk_175bfd05ea85",
+      "text": "## Class Attributes\n\nShared by all objects of the class:\n\n```python\nclass Dog:\n    species = \"Canis familiaris\"  # Class attribute\n\n    def __init__(self, name):\n        self.name = name\n\ndog1 = Dog(\"Buddy\")\ndog2 = Dog(\"Max\")\nprint(dog1.species)  # \"Canis familiaris\"\nprint(dog2.species)  # \"Canis familiaris\"\nprint(Dog.species)  # \"Canis familiaris\"\n```",
+      "metadata": {
+        "language": "python",
+        "category": "oop",
+        "topic": "classes",
+        "section": "Class Attributes",
+        "difficulty": "intermediate",
+        "source": "oop\\classes.md"
+      }
+    },
+    {
+      "id": "chunk_cf5babe8044e",
+      "text": "## Class Methods\n\nMethods that operate on the class, not individual objects. Use `@classmethod` decorator and take `cls` as first parameter:\n\n```python\nclass Dog:\n    count = 0\n\n    def __init__(self, name):\n        self.name = name\n        Dog.count += 1\n\n    @classmethod\n    def get_count(cls):\n        return cls.count\n```",
+      "metadata": {
+        "language": "python",
+        "category": "oop",
+        "topic": "classes",
+        "section": "Class Methods",
+        "difficulty": "intermediate",
+        "source": "oop\\classes.md"
+      }
+    },
+    {
+      "id": "chunk_df830c7647c9",
+      "text": "## Static Methods\n\nMethods that don't operate on the object or class. Use `@staticmethod`:\n\n```python\nclass MathUtils:\n    @staticmethod\n    def add(a, b):\n        return a + b\n\nMathUtils.add(3, 5)  # 8\n```",
+      "metadata": {
+        "language": "python",
+        "category": "oop",
+        "topic": "classes",
+        "section": "Static Methods",
+        "difficulty": "intermediate",
+        "source": "oop\\classes.md"
+      }
+    },
+    {
+      "id": "chunk_5067f53cc6a9",
+      "text": "## Encapsulation Basics\n\nProtect data by using naming conventions:\n\n```python\nclass BankAccount:\n    def __init__(self, balance):\n        self._balance = balance  # Private by convention (single underscore)\n\n    def get_balance(self):\n        return self._balance\n\n    def deposit(self, amount):\n        if amount > 0:\n            self._balance += amount\n```\n\nThe single underscore `_` is a convention; Python doesn't strictly enforce privacy.",
+      "metadata": {
+        "language": "python",
+        "category": "oop",
+        "topic": "classes",
+        "section": "Encapsulation Basics",
+        "difficulty": "intermediate",
+        "source": "oop\\classes.md"
+      }
+    },
+    {
+      "id": "chunk_ae03acaf97dc",
+      "text": "## Common Mistakes\n\n- Forgetting `self` in method parameters\n- Confusing class attributes with instance attributes\n- Modifying mutable class attributes (shared across all objects)\n- Not initializing attributes in `__init__`",
+      "metadata": {
+        "language": "python",
+        "category": "oop",
+        "topic": "classes",
+        "section": "Common Mistakes",
+        "difficulty": "intermediate",
+        "source": "oop\\classes.md"
+      }
+    },
+    {
+      "id": "chunk_3e05feb0aca6",
+      "text": "## Important Notes\n\n- Every method must have `self` as the first parameter\n- Attributes can be added dynamically (not restricted to `__init__`)\n- Use double underscore `__` for stronger name mangling (advanced)\n- Classes organize related data and functions",
+      "metadata": {
+        "language": "python",
+        "category": "oop",
+        "topic": "classes",
+        "section": "Important Notes",
+        "difficulty": "intermediate",
+        "source": "oop\\classes.md"
+      }
+    },
+    {
+      "id": "chunk_ddf37efa7bfb",
+      "text": "## Related Concepts\n\n- Inheritance (creating subclasses)\n- Polymorphism (objects of different types responding the same way)\n- Encapsulation (hiding internal details)\n- Properties (getter/setter methods using @property)",
+      "metadata": {
+        "language": "python",
+        "category": "oop",
+        "topic": "classes",
+        "section": "Related Concepts",
+        "difficulty": "intermediate",
+        "source": "oop\\classes.md"
+      }
+    },
+    {
+      "id": "chunk_8103f9addfe7",
+      "text": "## Definition\n\nInheritance allows a class (child/subclass) to inherit attributes and methods from another class (parent/superclass). This promotes code reuse and creates hierarchical relationships.",
+      "metadata": {
+        "language": "python",
+        "category": "oop",
+        "topic": "inheritance",
+        "section": "Definition",
+        "difficulty": "intermediate",
+        "source": "oop\\inheritance.md"
+      }
+    },
+    {
+      "id": "chunk_32e51f82565d",
+      "text": "## Parent and Child Classes\n\nCreate a child class that inherits from a parent:\n\n```python\nclass Animal:\n    def __init__(self, name):\n        self.name = name\n\n    def speak(self):\n        print(f\"{self.name} makes a sound\")\n\nclass Dog(Animal):  # Dog inherits from Animal\n    pass\n\ndog = Dog(\"Buddy\")\ndog.speak()  # Works: \"Buddy makes a sound\"\n```",
+      "metadata": {
+        "language": "python",
+        "category": "oop",
+        "topic": "inheritance",
+        "section": "Parent and Child Classes",
+        "difficulty": "intermediate",
+        "source": "oop\\inheritance.md"
+      }
+    },
+    {
+      "id": "chunk_e3c7aeeaa01b",
+      "text": "## Method Overriding\n\nChild classes can override parent methods:\n\n```python\nclass Animal:\n    def speak(self):\n        print(\"Some sound\")\n\nclass Dog(Animal):\n    def speak(self):  # Override\n        print(\"Woof!\")\n\nclass Cat(Animal):\n    def speak(self):  # Override\n        print(\"Meow!\")\n\ndog = Dog()\ndog.speak()  # \"Woof!\"\n\ncat = Cat()\ncat.speak()  # \"Meow!\"\n```",
+      "metadata": {
+        "language": "python",
+        "category": "oop",
+        "topic": "inheritance",
+        "section": "Method Overriding",
+        "difficulty": "intermediate",
+        "source": "oop\\inheritance.md"
+      }
+    },
+    {
+      "id": "chunk_57628e771c3a",
+      "text": "## super()\n\nCall the parent class's method from the child class:\n\n```python\nclass Animal:\n    def __init__(self, name):\n        self.name = name\n\n    def speak(self):\n        print(f\"{self.name} makes a sound\")\n\nclass Dog(Animal):\n    def __init__(self, name, breed):\n        super().__init__(name)  # Call parent __init__\n        self.breed = breed\n\n    def speak(self):\n        super().speak()  # Call parent speak\n        print(\"Woof!\")\n\ndog = Dog(\"Buddy\", \"Golden Retriever\")\ndog.speak()\n# \"Buddy makes a sound\"\n# \"Woof!\"\n```",
+      "metadata": {
+        "language": "python",
+        "category": "oop",
+        "topic": "inheritance",
+        "section": "super()",
+        "difficulty": "intermediate",
+        "source": "oop\\inheritance.md"
+      }
+    },
+    {
+      "id": "chunk_5220f076b04c",
+      "text": "## Multiple Inheritance Basics\n\nA class can inherit from multiple parents:\n\n```python\nclass Swimmer:\n    def swim(self):\n        print(\"Swimming\")\n\nclass Flyer:\n    def fly(self):\n        print(\"Flying\")\n\nclass Duck(Swimmer, Flyer):\n    pass\n\nduck = Duck()\nduck.swim()  # \"Swimming\"\nduck.fly()   # \"Flying\"\n```\n\nWith multiple inheritance, method resolution order (MRO) determines which method is called. Use `help(ClassName)` or `ClassName.__mro__` to see the order.",
+      "metadata": {
+        "language": "python",
+        "category": "oop",
+        "topic": "inheritance",
+        "section": "Multiple Inheritance Basics",
+        "difficulty": "intermediate",
+        "source": "oop\\inheritance.md"
+      }
+    },
+    {
+      "id": "chunk_882fc97dcfab",
+      "text": "## isinstance()\n\nCheck if an object is an instance of a class:\n\n```python\nclass Animal:\n    pass\n\nclass Dog(Animal):\n    pass\n\ndog = Dog()\nisinstance(dog, Dog)  # True\nisinstance(dog, Animal)  # True (subclass counts)\nisinstance(dog, str)  # False\n```",
+      "metadata": {
+        "language": "python",
+        "category": "oop",
+        "topic": "inheritance",
+        "section": "isinstance()",
+        "difficulty": "intermediate",
+        "source": "oop\\inheritance.md"
+      }
+    },
+    {
+      "id": "chunk_d1239a9d0981",
+      "text": "## issubclass()\n\nCheck if a class is a subclass of another:\n\n```python\nclass Animal:\n    pass\n\nclass Dog(Animal):\n    pass\n\nissubclass(Dog, Animal)  # True\nissubclass(Animal, Dog)  # False\nissubclass(str, object)  # True (all classes inherit from object)\n```",
+      "metadata": {
+        "language": "python",
+        "category": "oop",
+        "topic": "inheritance",
+        "section": "issubclass()",
+        "difficulty": "intermediate",
+        "source": "oop\\inheritance.md"
+      }
+    },
+    {
+      "id": "chunk_8486322e0df1",
+      "text": "## Common Mistakes\n\n- Forgetting to call `super().__init__()` in child `__init__`\n- Assuming method resolution order in multiple inheritance\n- Overriding methods unintentionally (name collision)\n- Creating deep inheritance hierarchies (hard to follow)",
+      "metadata": {
+        "language": "python",
+        "category": "oop",
+        "topic": "inheritance",
+        "section": "Common Mistakes",
+        "difficulty": "intermediate",
+        "source": "oop\\inheritance.md"
+      }
+    },
+    {
+      "id": "chunk_b89b99844e1d",
+      "text": "## Important Notes\n\n- All Python classes inherit from `object` (the base class)\n- `super()` is preferred over calling parent class directly\n- Use inheritance for \"is-a\" relationships (Dog is an Animal)\n- Composition (having objects as attributes) is often better than deep inheritance",
+      "metadata": {
+        "language": "python",
+        "category": "oop",
+        "topic": "inheritance",
+        "section": "Important Notes",
+        "difficulty": "intermediate",
+        "source": "oop\\inheritance.md"
+      }
+    },
+    {
+      "id": "chunk_3a8ce38910c2",
+      "text": "## Related Concepts\n\n- Polymorphism (same method name, different behavior)\n- Abstract base classes (ABCs)\n- Method Resolution Order (MRO)\n- Duck typing (if it quacks like a duck, it's a duck)",
+      "metadata": {
+        "language": "python",
+        "category": "oop",
+        "topic": "inheritance",
+        "section": "Related Concepts",
+        "difficulty": "intermediate",
+        "source": "oop\\inheritance.md"
+      }
+    }
+  ],
+  "timestamp": "2026-09-01T20:24:41.913204Z"
+}

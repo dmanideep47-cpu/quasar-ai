@@ -1,0 +1,16 @@
+{
+  "system_instruction": {
+    "parts": [{
+      "text": "You are a helpful assistant. Return valid JSON only."
+    }]
+  },
+  "generationConfig": {
+    "responseMimeType": "application/json"
+  },
+  "contents": [{
+    "role": "user",
+    "parts": [{
+      "text": "hello"
+    }]
+  }]
+}
