@@ -38,9 +38,45 @@ function isStructuredResponse(value: unknown): value is Record<string, unknown> 
   return keys.some((k) => structuredKeys.includes(k));
 }
 
-type Props = { showHero?: boolean; onFocus?: () => void };
+type Props = {
+  showHero?: boolean;
+  onFocus?: () => void;
+  onSubmitted?: () => void;
+};
 
-export default function QuasarSearch({ showHero = true, onFocus }: Props) {
+type Attachment = {
+  id: string;
+  file: File;
+  url: string;
+  type: string;
+  name: string;
+  dataUrl: string;
+  text?: string;
+};
+
+const imageAccept = "image/*";
+const fileAccept = ".pdf,.txt,.doc,.docx,.csv,.json,image/*";
+const attachmentPrompt = "Analyze this attached file and give me a clear, step-by-step summary/answer.";
+
+function readAsDataUrl(file: File) {
+  return new Promise<string>((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(typeof reader.result === "string" ? reader.result : "");
+    reader.onerror = () => reject(new Error(`Unable to read ${file.name}.`));
+    reader.readAsDataURL(file);
+  });
+}
+
+function readAsText(file: File) {
+  return new Promise<string>((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(typeof reader.result === "string" ? reader.result : "");
+    reader.onerror = () => reject(new Error(`Unable to read ${file.name}.`));
+    reader.readAsText(file);
+  });
+}
+
+export default function QuasarSearch({ showHero = true, onFocus, onSubmitted }: Props) {
   const [message, setMessage] = useState("");
   const [response, setResponse] = useState<ResponseData | null>(null);
   const [plainAnswer, setPlainAnswer] = useState("");
@@ -48,15 +84,21 @@ export default function QuasarSearch({ showHero = true, onFocus }: Props) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [asked, setAsked] = useState(false);
+  const [attachments, setAttachments] = useState<Attachment[]>([]);
+  const [attachmentError, setAttachmentError] = useState("");
 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const typingTimerRef = useRef<number | null>(null);
+  const imageInputRef = useRef<HTMLInputElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const attachmentsRef = useRef<Attachment[]>([]);
+
+  useEffect(() => {
+    attachmentsRef.current = attachments;
+  }, [attachments]);
 
   useEffect(() => {
     return () => {
-      if (typingTimerRef.current !== null) {
-        window.clearInterval(typingTimerRef.current);
-      }
+      attachmentsRef.current.forEach((attachment) => URL.revokeObjectURL(attachment.url));
     };
   }, []);
 
@@ -68,24 +110,63 @@ export default function QuasarSearch({ showHero = true, onFocus }: Props) {
     textarea.style.height = `${Math.min(textarea.scrollHeight, 120)}px`;
   }, [message]);
 
-  async function askQuasar() {
-    const nextQuestion = message.trim();
-    if (!nextQuestion || loading) return;
+  async function handleFiles(fileList: FileList | null) {
+    if (!fileList) return;
+    setAttachmentError("");
 
+    try {
+      const selected = Array.from(fileList).slice(0, 4);
+      const nextAttachments = await Promise.all(
+        selected.map(async (file) => {
+          if (file.size > 8 * 1024 * 1024) {
+            throw new Error(`${file.name} is larger than 8 MB.`);
+          }
+          const isText = file.type.startsWith("text/") || /\.(csv|json|txt)$/i.test(file.name);
+          return {
+            id: `${file.name}-${file.lastModified}-${Math.random().toString(36).slice(2)}`,
+            file,
+            url: URL.createObjectURL(file),
+            type: file.type || "application/octet-stream",
+            name: file.name,
+            dataUrl: await readAsDataUrl(file),
+            text: isText ? await readAsText(file) : undefined,
+          };
+        }),
+      );
+      setAttachments((current) => [...current, ...nextAttachments]);
+    } catch (error) {
+      setAttachmentError(error instanceof Error ? error.message : "Unable to attach that file.");
+    }
+  }
+
+  function removeAttachment(id: string) {
+    setAttachments((current) => {
+      const attachment = current.find((item) => item.id === id);
+      if (attachment) URL.revokeObjectURL(attachment.url);
+      return current.filter((item) => item.id !== id);
+    });
+  }
+
+  async function askQuasar(question = message) {
+    const nextQuestion = question.trim() || (attachments.length ? attachmentPrompt : "");
+    if (!nextQuestion || loading) return;
+    const submittedAttachments = attachments;
+    setAttachments([]);
+
+    setMessage(nextQuestion);
     setAsked(true);
+    onSubmitted?.();
     setLoading(true);
     setError("");
     setResponse(null);
     setPlainAnswer("");
     setImageUrl("");
-    if (typingTimerRef.current !== null) {
-      window.clearInterval(typingTimerRef.current);
-      typingTimerRef.current = null;
-    }
 
     try {
-      const imageRequest = /\b(create|generate|draw|make|show|illustrate|design|visualize)\b[\s\S]*\b(image|picture|illustration|diagram|poster|chart|visual)\b/i.test(nextQuestion)
-        || /\b(can you|please|i want|i need)\b[\s\S]*\b(image|picture|illustration|diagram|poster|chart|visual)\b/i.test(nextQuestion);
+      const imageRequest = submittedAttachments.length === 0 && (
+        /\b(create|generate|draw|make|show|illustrate|design|visualize)\b[\s\S]*\b(image|picture|illustration|diagram|poster|chart|visual)\b/i.test(nextQuestion)
+        || /\b(can you|please|i want|i need)\b[\s\S]*\b(image|picture|illustration|diagram|poster|chart|visual)\b/i.test(nextQuestion)
+      );
       if (imageRequest) {
         const imageResponse = await fetch("/api/image", {
           method: "POST",
@@ -104,7 +185,15 @@ export default function QuasarSearch({ showHero = true, onFocus }: Props) {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ message: nextQuestion }),
+        body: JSON.stringify({
+          message: nextQuestion,
+          attachments: submittedAttachments.map(({ name, type, dataUrl, text }) => ({
+            name,
+            type,
+            dataUrl,
+            text,
+          })),
+        }),
       });
 
       const data = await response.json();
@@ -122,28 +211,11 @@ export default function QuasarSearch({ showHero = true, onFocus }: Props) {
         const baseResponse: ResponseData = {
           type: "general",
           question: nextQuestion,
-          summary: "",
-          finalAnswer: "",
+          summary: payload,
+          finalAnswer: payload,
         };
         setResponse(baseResponse);
-        setPlainAnswer("");
-
-        let visibleCharacters = 0;
-        typingTimerRef.current = window.setInterval(() => {
-          visibleCharacters += 3;
-          const visibleText = payload.slice(0, visibleCharacters);
-          setPlainAnswer(visibleText);
-          setResponse({
-            ...baseResponse,
-            summary: visibleText,
-            finalAnswer: visibleText,
-          });
-
-          if (visibleCharacters >= payload.length && typingTimerRef.current !== null) {
-            window.clearInterval(typingTimerRef.current);
-            typingTimerRef.current = null;
-          }
-        }, 12);
+        setPlainAnswer(payload);
       } else if (payload && typeof payload === "object" && isStructuredResponse(payload)) {
         const p = payload as Record<string, unknown>;
         const normalizedType =
@@ -201,6 +273,7 @@ export default function QuasarSearch({ showHero = true, onFocus }: Props) {
           : "Unable to generate the solution."
       );
     } finally {
+      submittedAttachments.forEach((attachment) => URL.revokeObjectURL(attachment.url));
       setLoading(false);
     }
   }
@@ -237,6 +310,33 @@ export default function QuasarSearch({ showHero = true, onFocus }: Props) {
             void askQuasar();
           }}
         >
+          <input ref={imageInputRef} type="file" accept={imageAccept} hidden onChange={(event) => {
+            void handleFiles(event.target.files);
+            event.currentTarget.value = "";
+          }} />
+          <input ref={fileInputRef} type="file" accept={fileAccept} multiple hidden onChange={(event) => {
+            void handleFiles(event.target.files);
+            event.currentTarget.value = "";
+          }} />
+          {attachments.length > 0 && (
+            <div className="search-attachments" aria-label="Attached files">
+              {attachments.map((attachment) => (
+                <div className="search-attachment" key={attachment.id}>
+                  {attachment.type.startsWith("image/") ? (
+                    <img src={attachment.url} alt="" />
+                  ) : (
+                    <span className="search-attachment__icon">📄</span>
+                  )}
+                  <span className="search-attachment__name" title={attachment.name}>
+                    {attachment.name}
+                  </span>
+                  <button type="button" onClick={() => removeAttachment(attachment.id)} aria-label={`Remove ${attachment.name}`}>
+                    ×
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
           <textarea
             ref={textareaRef}
             value={message}
@@ -249,33 +349,32 @@ export default function QuasarSearch({ showHero = true, onFocus }: Props) {
           />
 
           <div className="search-actions">
-            <button type="button" className="icon-button" aria-label="Open camera">
+            <button type="button" className="icon-button" aria-label="Open camera" onClick={() => imageInputRef.current?.click()}>
               📷
             </button>
-            <button type="button" className="icon-button" aria-label="Attach file">
+            <button type="button" className="icon-button" aria-label="Attach file" onClick={() => fileInputRef.current?.click()}>
               📎
             </button>
             <button
               type="submit"
               className="send-button"
-              disabled={!message.trim() || loading}
+              disabled={(!message.trim() && attachments.length === 0) || loading}
               aria-label="Send prompt"
             >
               {loading ? <span className="send-loader" /> : "↑"}
             </button>
           </div>
+          {attachmentError && <p className="search-attachment-error">{attachmentError}</p>}
           </form>
       </div>
 
-      {!asked && (
-        <div className="quick-actions">
+      <div className={`quick-actions${asked ? " is-hidden" : ""}`}>
           {quickPrompts.map((prompt) => (
-            <button key={prompt} type="button" onClick={() => setMessage(prompt)}>
+            <button key={prompt} type="button" onClick={() => void askQuasar(prompt)}>
               {prompt}
             </button>
           ))}
-        </div>
-      )}
+      </div>
 
       {loading && (
         <div className="thinking-card">

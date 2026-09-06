@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import QuasarSearch from "./components/QuasarSearch";
 import QuasarIntro from "./components/QuasarIntro";
 import QuasarBackground from "./components/QuasarBackground";
@@ -9,10 +9,32 @@ import QuasarOnboarding from "./components/QuasarOnboarding";
 
 export default function Home() {
   const [stage, setStage] = useState<"onboarding" | "think" | "workspace">("onboarding");
+  const [animState, setAnimState] = useState<"idle" | "collapsing" | "collapsed">("idle");
+  const collapseTimerRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (collapseTimerRef.current !== null) {
+        window.clearTimeout(collapseTimerRef.current);
+      }
+    };
+  }, []);
+
+  function handleSearchSubmitted() {
+    if (collapseTimerRef.current !== null) {
+      window.clearTimeout(collapseTimerRef.current);
+    }
+
+    setAnimState("collapsing");
+    collapseTimerRef.current = window.setTimeout(() => {
+      setAnimState("collapsed");
+      collapseTimerRef.current = null;
+    }, 4000);
+  }
 
   return (
-    <main className="quasar-home">
-      <QuasarBackground />
+    <main className={`quasar-home galaxy-state-${animState}`}>
+      <QuasarBackground animationState={animState} />
       <QuasarIntro onComplete={() => setStage("onboarding")} />
       {stage === "onboarding" && (
         <QuasarOnboarding onComplete={() => setStage("think")} />
@@ -101,40 +123,13 @@ export default function Home() {
 
         {/* ================= BASIC HOME SEARCH ================= */}
         <div className="search-wrap">
-          <QuasarSearch showHero={false} onFocus={() => setStage("workspace")} />
+          <QuasarSearch
+            showHero={false}
+            onFocus={() => setStage("workspace")}
+            onSubmitted={handleSearchSubmitted}
+          />
         </div>
 
-      </section>}
-
-      {stage === "workspace" && <section className="quasar-areas" aria-label="Quasar areas">
-        <article className="quasar-area">
-          <div>
-            <span className="quasar-area__label">01 / LEARNING</span>
-            <h2>Workspace</h2>
-            <p>Your intelligent space for learning, reasoning, and solving doubts.</p>
-            <span className="quasar-area__agent">Agent · Lyra</span>
-          </div>
-          <Link href="/workspace" className="quasar-area__cta">Open Workspace →</Link>
-        </article>
-
-        <article className="quasar-area">
-          <div>
-            <span className="quasar-area__label">02 / CREATION</span>
-            <h2>Code Lab</h2>
-            <p>Write, understand, debug, and improve code with intelligent assistance.</p>
-            <span className="quasar-area__agent">Agent · Cygnus</span>
-          </div>
-          <Link href="/code-lab" className="quasar-area__cta">Open Code Lab →</Link>
-        </article>
-
-        <article className="quasar-area">
-          <div>
-            <span className="quasar-area__label">03 / KNOWLEDGE</span>
-            <h2>Library</h2>
-            <p>Your organized knowledge space for notes, resources, and learning material.</p>
-          </div>
-          <Link href="/library" className="quasar-area__cta">Open Library →</Link>
-        </article>
       </section>}
 
     </main>

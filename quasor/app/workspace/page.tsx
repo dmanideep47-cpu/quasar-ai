@@ -13,6 +13,12 @@ type Message = {
   imageUrl?: string;
 };
 
+const followUpActions = [
+  { label: "🔍 Deep Dive", prompt: "Give me a detailed analytical breakdown of your previous answer." },
+  { label: "⚡ Simplify / ELI5", prompt: "Rewrite your previous answer in simple ELI5 language." },
+  { label: "💻 Show Code Solution", prompt: "Show an executable code solution for the concept we discussed." },
+];
+
 type LyraState = "idle" | "thinking" | "searching" | "answering";
 
 const suggestions = [
@@ -35,11 +41,30 @@ export default function WorkspacePage() {
   const [lyraState, setLyraState] = useState<LyraState>("idle");
   const [isSending, setIsSending] = useState(false);
   const [attachedFile, setAttachedFile] = useState<File | null>(null);
+  const [followUps, setFollowUps] = useState<string[]>([]);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const composerRef = useRef<HTMLTextAreaElement>(null);
   const chatEndRef = useRef<HTMLDivElement>(null);
   const nextMessageId = useRef(0);
-  const STREAM_DELAY_MS = 26;
+
+  function getFollowUps(question: string, answer: string) {
+    const topic = `${question} ${answer}`.toLowerCase();
+    const contextual = topic.includes("quantum")
+      ? ["Show code example", "Explain the math behind it", "Compare it with classical computing", "What are real-world applications?"]
+      : topic.includes("code") || topic.includes("program") || topic.includes("algorithm")
+        ? ["Show a working example", "Explain the time complexity", "Find common bugs", "Suggest an improved version"]
+        : topic.includes("math") || /\b(equation|integral|derivative|probability)\b/.test(topic)
+          ? ["Solve a similar example", "Explain the intuition", "Show every intermediate step", "Check my answer"]
+          : ["Give me a practical example", "Explain the key idea more deeply", "What are common mistakes?", "How does this compare to alternatives?"];
+
+    return contextual.slice(0, 4);
+  }
+
+  function handleFollowUp(prompt: string) {
+    if (isSending) return;
+    void askLyra(prompt);
+  }
 
   const createMessageId = () => {
     nextMessageId.current += 1;
@@ -47,40 +72,16 @@ export default function WorkspacePage() {
   };
 
   function streamLyraMessage(text: string) {
-    return new Promise<void>((resolve) => {
-      const messageId = createMessageId();
-      const message: Message = {
-        id: messageId,
+    setMessages((prev) => [
+      ...prev,
+      {
+        id: createMessageId(),
         role: "lyra",
-        content: "",
+        content: text,
         time: getTime(),
-        isStreaming: true,
-      };
-
-      setMessages((prev) => [...prev, message]);
-
-      let index = 0;
-      const timer = window.setInterval(() => {
-        index += 1;
-        const nextText = text.slice(0, index);
-
-        setMessages((prev) =>
-          prev.map((item) =>
-            item.id === messageId ? { ...item, content: nextText } : item,
-          ),
-        );
-
-        if (index >= text.length) {
-          window.clearInterval(timer);
-          setMessages((prev) =>
-            prev.map((item) =>
-              item.id === messageId ? { ...item, isStreaming: false } : item,
-            ),
-          );
-          resolve();
-        }
-      }, STREAM_DELAY_MS);
-    });
+        isStreaming: false,
+      },
+    ]);
   }
 
   useEffect(() => {
@@ -103,6 +104,7 @@ export default function WorkspacePage() {
     };
 
     setMessages((prev) => [...prev, userMessage]);
+    setFollowUps([]);
     setInput("");
     setIsSending(true);
     setLyraState("thinking");
@@ -132,10 +134,18 @@ export default function WorkspacePage() {
           time: getTime(),
           imageUrl: imageData.imageUrl,
         }]);
+        setFollowUps(getFollowUps(cleanQuestion, imageData.answer || ""));
         return;
       }
 
-      const response = await fetch("/api/ask", {
+      const history = [...messages, userMessage]
+       .filter((message) => message.content.trim())
+       .map((message) => ({
+         role: message.role === "lyra" ? "assistant" as const : "user" as const,
+         content: message.content,
+       }));
+
+      const response = await fetch("/api/ask/chat", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -144,6 +154,7 @@ export default function WorkspacePage() {
           message: attachedFile
             ? `${cleanQuestion}\n\nAttached file: ${attachedFile.name}`
             : cleanQuestion,
+          messages: history,
         }),
       });
 
@@ -164,6 +175,7 @@ export default function WorkspacePage() {
       } else {
         await streamLyraMessage(answerText);
       }
+      setFollowUps(getFollowUps(cleanQuestion, answerText));
     } catch (error) {
       console.error(error);
 
@@ -363,6 +375,34 @@ export default function WorkspacePage() {
               </article>
             )}
 
+            {!isSending && followUps.length > 0 && (
+              <div className="workspace-follow-up" aria-label="Follow-up suggestions">
+                <div className="workspace-follow-up__header">
+                  <span>FOLLOW UP &amp; DIG DEEPER</span>
+                  <i />
+                </div>
+                <div className="workspace-follow-up__pills">
+                  {followUps.map((prompt) => (
+                    <button key={prompt} type="button" onClick={() => handleFollowUp(prompt)}>
+                      {prompt}
+                    </button>
+                  ))}
+                  {followUpActions.map((action) => (
+                    <button key={action.label} type="button" onClick={() => handleFollowUp(action.prompt)}>
+                      {action.label}
+                    </button>
+                  ))}
+                  <button
+                    type="button"
+                    className="follow-up-focus"
+                    onClick={() => composerRef.current?.focus()}
+                  >
+                    ❓ Ask Follow-Up...
+                  </button>
+                </div>
+              </div>
+            )}
+
             <div ref={chatEndRef} />
           </div>
         )}
@@ -413,6 +453,7 @@ export default function WorkspacePage() {
             onSubmit={handleSubmit}
           >
             <textarea
+              ref={composerRef}
               value={input}
               onChange={(event) => setInput(event.target.value)}
               onKeyDown={handleKeyDown}

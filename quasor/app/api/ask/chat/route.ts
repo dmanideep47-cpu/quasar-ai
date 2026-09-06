@@ -1,5 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
-import { GEMINI_MODEL } from "../../../lib/gemini";
+import { generateAIResponse } from "../../../lib/ai/router";
+
+function mayBeIncomplete(answer: string) {
+  const text = answer.trim();
+  if (text.length < 500) return false;
+  return !/[.!?:;)\]}]$/.test(text) && !text.endsWith("```") && !text.endsWith("$$");
+}
 
 function parseAnswer(rawText: string, question: string) {
   let text = rawText.trim();
@@ -75,6 +81,18 @@ export async function POST(req: NextRequest) {
         ? body.message.trim()
         : "";
 
+    const history = Array.isArray(body?.messages)
+      ? body.messages.filter(
+          (item: unknown): item is { role: "user" | "assistant"; content: string } =>
+            !!item &&
+            typeof item === "object" &&
+            ((item as { role?: unknown }).role === "user" ||
+              (item as { role?: unknown }).role === "assistant") &&
+            typeof (item as { content?: unknown }).content === "string" &&
+            (item as { content: string }).content.trim().length > 0,
+        )
+      : [];
+
     if (!message) {
       return NextResponse.json(
         { error: "Message is required." },
@@ -82,34 +100,10 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const apiKey = process.env.GEMINI_API_KEY;
-
-    if (!apiKey) {
-      return NextResponse.json(
-        {
-          error:
-            "GEMINI_API_KEY is missing from .env.local",
-        },
-        { status: 500 }
-      );
-    }
-
-    const url =
-      `https://generativelanguage.googleapis.com/v1beta/` +
-      `models/${GEMINI_MODEL}:generateContent?key=${apiKey}`;
-
-    const response = await fetch(url, {
-      method: "POST",
-
-      headers: {
-        "Content-Type": "application/json",
-      },
-
-      body: JSON.stringify({
-        system_instruction: {
-          parts: [
-            {
-              text: `You are an excellent educational AI tutor for university computing students. Your job is to give crystal-clear, step-by-step answers with a friendly but professional tone.
+    const result = await generateAIResponse({
+      provider: "auto",
+      task: "academic",
+      systemPrompt: `You are an excellent educational AI tutor for university computing students. Your job is to give crystal-clear, step-by-step answers with a friendly but professional tone.
 
 RESPONSE STRUCTURE (MANDATORY):
 1. Start with 1–2 sentences that DIRECTLY answer the core question. If it's a math problem, state the final numeric/analytic answer here.
@@ -118,92 +112,52 @@ RESPONSE STRUCTURE (MANDATORY):
    - Numbered steps for procedures (math, coding, algorithms)
    - Bullet points for lists of facts, features, or tips
    - Short, clear sentences; avoid unnecessary jargon
-   - For math: rearrange into standard form, name the method, show key intermediate steps
-3. Tone: Assume the user is beginner to lower-intermediate. Be practical and visual; use small examples when helpful. Never mention internal tools, models, or your reasoning process.
-4. Ending: Do NOT add generic summaries like "In conclusion...". Just end naturally after the final result or key takeaway.
+   - For math and physics: define every symbol before using it, derive equations step by step, and use display LaTeX delimiters ($$...$$) for important equations
+3. Visual teaching rule: For mathematics, physics, geometry, trigonometry, coordinate graphs, functions, or spatial relationships, include a clearly labeled "## Visual Intuition" section whenever a diagram would help. Put a simple, accurate ASCII diagram inside a fenced text block so spacing is preserved. Label axes, points, forces, distances, angles, or directions as appropriate, then explain the diagram in 1–3 sentences. Do not invent diagrams for unrelated questions or use a diagram instead of the derivation.
+4. Tone: Assume the user is beginner to lower-intermediate. Be practical and visual; use small examples when helpful. Never mention internal tools, models, or your reasoning process.
+5. For mechanics problems, explicitly state the geometry, constraint, kinetic energy, potential energy, Lagrangian, Euler-Lagrange equation, equilibrium approximation, and final frequency. Explain each step in beginner-friendly language. Never output raw LaTeX commands outside math delimiters.
+6. Ending: Do NOT add generic summaries like "In conclusion...". Just end naturally after the final result or key takeaway. Always finish the final sentence, equation, and ASCII diagram.
 
-RESPONSE FORMAT: Return ONLY plain text markdown (no JSON, no code fences, no special markers). The text should be directly readable and follow the structure above exactly.`,
-            },
-          ],
-        },
-
-        contents: [
-          {
-            role: "user",
-            parts: [
-              {
-                text: message,
-              },
-            ],
-          },
-        ],
-
-        generationConfig: {
-          responseMimeType: "text/plain",
-          temperature: 0.4,
-        },
-      }),
+RESPONSE FORMAT: Return ONLY plain text markdown (no JSON or special markers). Fenced text blocks are allowed and required for ASCII diagrams. Keep every diagram and equation complete.`,
+      messages: history.length > 0
+        ? history
+        : [{ role: "user", content: message }],
+      temperature: 0.4,
+      maxTokens: 5000,
     });
 
-    let data;
-    try {
-      const text = await response.text();
-      console.log("Gemini raw text response:", text.substring(0, 300));
-      data = JSON.parse(text);
-    } catch (parseErr) {
-      console.error("Failed to parse Gemini response:", parseErr);
-      return NextResponse.json(
-        { error: "Invalid response from AI service" },
-        { status: 500 }
-      );
-    }
-
-    if (!response.ok) {
-      console.error("Gemini API error:", data);
-
-      return NextResponse.json(
-        {
-          error:
-            data?.error?.message ||
-            "Gemini API request failed.",
-        },
-        { status: response.status }
-      );
-    }
-
-    const rawAnswer =
-      data?.candidates?.[0]?.content?.parts
-        ?.map((part: { text?: string }) => part.text || "")
-        .join("")
-        .trim();
-
-    if (!rawAnswer) {
-      console.error(
-        "Gemini returned no text"
-      );
-
-      return NextResponse.json(
-        {
-          error: "Gemini returned an empty response.",
-        },
-        { status: 500 }
-      );
+    let answer = result.answer;
+    if (
+      result.finishReason === "MAX_TOKENS" ||
+      result.finishReason === "length" ||
+      mayBeIncomplete(result.answer)
+    ) {
+      const continuation = await generateAIResponse({
+        provider: "auto",
+        task: "academic",
+        systemPrompt: `Continue the previous answer without repeating it. Finish the explanation naturally and never stop mid-sentence.`,
+        messages: [
+          ...history,
+          { role: "assistant", content: result.answer },
+          { role: "user", content: "Continue from the last incomplete sentence and finish the solution." },
+        ],
+        temperature: 0.3,
+        maxTokens: 3000,
+      });
+      answer = `${result.answer}\n\n${continuation.answer}`;
     }
 
     return NextResponse.json({
-      answer: rawAnswer,
+      answer,
     });
   } catch (error) {
     console.error("Quasar API error:", error instanceof Error ? error.message : String(error));
 
     return NextResponse.json(
       {
-        error:
-          error instanceof Error
-            ? error.message
-            : "Something went wrong while processing your question.",
+        error: "Quasar couldn't reach its AI services right now. Please try again shortly.",
       },
-      { status: 500 }
+      { status: 503 }
     );
   }
 }

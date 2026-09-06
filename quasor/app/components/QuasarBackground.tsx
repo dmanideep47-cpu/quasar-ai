@@ -34,7 +34,10 @@ const PALETTE = [
   { r: 255, g: 215, b: 130 }, // Accretion Gold
 ];
 
-export default function AstraQuasarBackground() {
+type AnimationState = "idle" | "collapsing" | "collapsed";
+type Props = { animationState?: AnimationState };
+
+export default function AstraQuasarBackground({ animationState = "idle" }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -336,17 +339,19 @@ export default function AstraQuasarBackground() {
   }, []);
 
   return (
-    <canvas
-      ref={canvasRef}
-      aria-hidden="true"
-      style={{
-        position: "fixed",
-        inset: 0,
-        width: "100vw",
-        height: "100vh",
-        pointerEvents: "none",
-        zIndex: -1,
-      }}
-    />
+    <div className={`quasar-background-shell galaxy-${animationState}`}>
+      <canvas
+        ref={canvasRef}
+        className="quasar-background"
+        aria-hidden="true"
+        style={{
+          position: "absolute",
+          inset: 0,
+          width: "100vw",
+          height: "100vh",
+          pointerEvents: "none",
+        }}
+      />
+    </div>
   );
 }

@@ -9,9 +9,7 @@ import {
   createCelebrationMessage,
 } from "../../lib/execution-context-builder";
 import type { ExecutionResult } from "../../lib/execute-sandbox";
-import { GEMINI_MODEL, getGeminiClient } from "../../lib/gemini";
-
-const genAI = getGeminiClient();
+import { generateAIResponse } from "../../lib/ai/router";
 
 function generateMockAnswer(action: string, language: string): string {
   const mockResponses: Record<string, string> = {
@@ -155,33 +153,16 @@ Test Results: ${testResults}`;
 Respond in a professional, technical tone suitable for serious programmers.`;
 
     console.log("[CYGNUS] System prompt built, length:", systemPrompt.length);
-    console.log(`[CYGNUS] Calling Gemini with model: ${GEMINI_MODEL}`);
-
-    const model = genAI.getGenerativeModel({ model: GEMINI_MODEL });
-
-    console.log("[CYGNUS] Generating content...");
-    const result = await model.generateContent({
-      contents: [
-        {
-          role: "user",
-          parts: [
-            {
-              text: message,
-            },
-          ],
-        },
-      ],
-      systemInstruction: systemPrompt,
-      generationConfig: {
-        temperature: 0.7,
-        topK: 40,
-        topP: 0.95,
-        maxOutputTokens: 1000,
-      },
+    const result = await generateAIResponse({
+      provider: "auto",
+      task: "reasoning",
+      systemPrompt,
+      messages: [{ role: "user", content: message }],
+      temperature: 0.7,
+      maxTokens: 3000,
     });
 
-    const answer =
-      result.response.candidates?.[0]?.content?.parts?.[0]?.text || "";
+    const answer = result.answer;
 
     console.log("[CYGNUS] Response generated, length:", answer.length);
 
@@ -190,14 +171,13 @@ Respond in a professional, technical tone suitable for serious programmers.`;
       { status: 200, headers: { "Content-Type": "application/json" } }
     );
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : "Unknown error";
-    console.error("[CYGNUS] API Error:", errorMessage, error);
+    console.error("[CYGNUS] API Error:", error instanceof Error ? error.message : "Unknown error");
 
     return new Response(
       JSON.stringify({
-        error: errorMessage || "Failed to generate response",
+        error: "Quasar couldn't reach its AI services right now. Please try again shortly.",
       }),
-      { status: 500, headers: { "Content-Type": "application/json" } }
+      { status: 503, headers: { "Content-Type": "application/json" } }
     );
   }
 }

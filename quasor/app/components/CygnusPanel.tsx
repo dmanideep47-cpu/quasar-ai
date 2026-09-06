@@ -38,7 +38,6 @@ export default function CygnusPanel({
   const [activeTab, setActiveTab] = useState<"chat" | "hint" | "debug" | "explain" | "optimize">("chat");
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const nextMessageId = useRef(0);
-  const STREAM_DELAY_MS = 26;
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -54,44 +53,20 @@ export default function CygnusPanel({
   };
 
   const streamCygnusMessage = (text: string) => {
-    return new Promise<void>((resolve) => {
-      const messageId = createMessageId();
-      const message: Message = {
-        id: messageId,
+    setMessages((prev) => [
+      ...prev,
+      {
+        id: createMessageId(),
         role: "cygnus",
-        content: "",
+        content: text,
         time: new Date().toLocaleTimeString("en-US", {
           hour: "2-digit",
           minute: "2-digit",
           hour12: true,
         }),
-        isStreaming: true,
-      };
-
-      setMessages((prev) => [...prev, message]);
-
-      let index = 0;
-      const timer = window.setInterval(() => {
-        index += 1;
-        const nextText = text.slice(0, index);
-
-        setMessages((prev) =>
-          prev.map((item) =>
-            item.id === messageId ? { ...item, content: nextText } : item,
-          ),
-        );
-
-        if (index >= text.length) {
-          window.clearInterval(timer);
-          setMessages((prev) =>
-            prev.map((item) =>
-              item.id === messageId ? { ...item, isStreaming: false } : item,
-            ),
-          );
-          resolve();
-        }
-      }, STREAM_DELAY_MS);
-    });
+        isStreaming: false,
+      },
+    ]);
   };
 
   const sendMessage = async (userMessage: string, action?: string) => {
