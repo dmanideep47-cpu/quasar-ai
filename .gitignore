@@ -15,3 +15,9 @@ coverage/
 *.log
 npm-debug.log*
 .DS_Store
+
+# Local diagnostics and one-off API test payloads
+/___All_Errors.txt
+/response.json
+/test_gemini.json
+/test_request.json
