@@ -1,5 +1,17 @@
+# Dependencies and build output
 node_modules/
 .next/
+out/
+dist/
+build/
+coverage/
+
+# Local environment and secrets
 .env
-.env.local
-.env.*.local
+.env.*
+!.env.example
+
+# Logs and local artifacts
+*.log
+npm-debug.log*
+.DS_Store
